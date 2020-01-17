@@ -58,7 +58,7 @@ export default {
             },
             {
                 icon: 'el-icon-lx-copy',
-                index: 'setting',
+                index: 'Setting',
                 title: '系统设置'
             }
           ]

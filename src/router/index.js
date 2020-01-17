@@ -30,6 +30,11 @@ export default new Router({
                     meta: { title: '系统首页' }
                 },
                 {
+                    path: '/Setting',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Setting.vue'),
+                    meta: { title: '系统首页' }
+                },
+                {
                     path: '/icon',
                     component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
                     meta: { title: '自定义图标' }

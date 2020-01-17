@@ -6,13 +6,13 @@
                     <div class="user-info">
                         <img src="../../assets/img/img.jpg" class="user-avator" alt="">
                         <div class="user-info-cont">
-                            <div class="user-info-name">111</div>
+                            <div class="user-info-name">{{userInfo.userName}}</div>
                             <div v-if="userInfo.role == 1">超级管理员</div>
                             <div v-if="userInfo.role == 0">普通管理员</div>
                         </div>
                     </div>
                     <div class="user-info-list">上次登录时间：<span>{{userInfo.updateTime}}</span></div>
-                    <div class="user-info-list">上次登录地点：<span>{{userInfo.createTime}}</span></div>
+                    <div class="user-info-list">上次登录IP：<span>{{userInfo.ip}}</span></div>
                 </el-card>
                 <el-card shadow="hover" style="height:252px;">
                     <div slot="header" class="clearfix">

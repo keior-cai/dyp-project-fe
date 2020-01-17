@@ -11,6 +11,7 @@
 		  ref="multipleTable"
 		  :data="tableData"
 		  tooltip-effect="dark"
+      border
 		  style="width: 100%"
 			highlight-current-row="true"
 		  @selection-change="handleSelectionChange">
@@ -34,40 +35,45 @@
 		    width="120">
 		  </el-table-column>
       <el-table-column
-            prop="status"
-            label="状态"
-            :filters="[{ text: '正常', value: 0 }, { text: '禁用', value: 1 }]"
-            :filter-method="filterTag"
-            filter-placement="bottom-end">
-            <template slot-scope="scope">
-              <el-tag
-                :type="scope.row.status == 0  ? 'success' : 'danger'"
-                disable-transitions>
-                <span v-if="scope.row.status == 0">正常</span>
-                <span v-if="scope.row.status == 1">禁用</span>
-              </el-tag>
-            </template>
+        prop="status"
+        label="状态"
+        :filters="[{ text: '正常', value: 0 }, { text: '禁用', value: 1 }]"
+        :filter-method="filterTag"
+        filter-placement="bottom-end">
+          <template slot-scope="scope">
+            <el-tag
+              :type="scope.row.status == 0  ? 'success' : 'danger'"
+              disable-transitions>
+              <span v-if="scope.row.status == 0">正常</span>
+              <span v-if="scope.row.status == 1">禁用</span>
+            </el-tag>
+          </template>
       </el-table-column>
 		  <el-table-column
 		    label="用户类型"
 		    show-overflow-tooltip>
-		  <template slot-scope="scope">
-        <el-tag
-          :type="'primary'">
-          <span v-if="scope.row.role == 0">普通管理员</span>
-        </el-tag>
-      </template>
+        <template slot-scope="scope">
+          <el-tag
+            :type="'primary'">
+            <span v-if="scope.row.role == 0">普通客户</span>
+          </el-tag>
+        </template>
       </el-table-column>
       <el-table-column
-            prop="updateTime"
             label="上次登录时间"
-            sortable
-          >
+            sortable>
+        <template slot-scope="scope">
+          <i class="el-icon-time"></i>
+          <span style="margin-left: 10px">{{scope.row.updateTime}}</span>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="createTime"
         label="创建时间"
         show-overflow-tooltip>
+        <template slot-scope="scope">
+          <i class="el-icon-time"></i>
+          <span style="margin-left: 10px">{{scope.row.createTime}}</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="ip"
@@ -76,6 +82,8 @@
       </el-table-column>
       <el-table-column
         label="操作"
+        fixed="right"
+        highlight-current-row
         show-overflow-tooltip>
           <template slot-scope="scope">
             <el-tooltip 
@@ -85,8 +93,8 @@
               placement="right">
               <el-button 
                 type="primary" 
-                icon="el-icon-edit" 
-                circle 
+                size="mini"
+                icon="el-icon-edit"
                 @click="edit(scope.row)"/>
             </el-tooltip>
             
@@ -98,36 +106,116 @@
               <el-button 
                 type="danger" 
                 icon="el-icon-delete"
-                @click="del(scope.row)"
-                circle />
+                size="mini"
+                @click="del(scope.row)"/>
             </el-tooltip>
           </template>
       </el-table-column>
 		</el-table>
 		<div class="block" style="text-align: right;">
-		    <el-pagination
-		      @size-change="handleSizeChange"
-		      @current-change="handleCurrentChange"
-		      :current-page="currentPage"
-		      :page-sizes="[10, 20, 50, 100]"
-		      :page-size="tablePageSize"
-		      layout="total, sizes, prev, pager, next, jumper"
-		      :total="tablePageTotal">
-		    </el-pagination>
-		  </div>
+		  <el-pagination
+		    @size-change="handleSizeChange"
+		    @current-change="handleCurrentChange"
+		    :current-page="currentPage"
+		    :page-sizes="[10, 20, 50, 100]"
+		    :page-size="tablePageSize"
+		    layout="total, sizes, prev, pager, next, jumper"
+		    :total="tablePageTotal">
+		  </el-pagination>
+		</div>
+    <el-dialog title="添加客户" :visible.sync="dialogFormVisible">
+      <el-form :model="userInfo" status-icon :rules="rules" ref="ruleForm" label-width="100px">
+        <el-form-item label="用户名" :label-width="formLabelWidth">
+          <el-input 
+            v-model="userInfo.userName" 
+            autocomplete="off" 
+            placeholder="请输入用户名"
+            maxlength="20"
+            show-word-limit
+            :disabled="userInfo.userName"/>
+        </el-form-item>
+        <el-form-item label="姓名" :label-width="formLabelWidth">
+          <el-input
+            v-model="userInfo.name"
+            maxlength="20"
+            show-word-limit
+            autocomplete="off" 
+            placeholder="请输姓名"/>
+        </el-form-item>
+        <el-form-item label="密码" :label-width="formLabelWidth">
+          <el-input 
+            placeholder="请输入密码"
+            type="password"
+            v-model="userInfo.password" 
+            prop="password"
+            :show-password="showPassword" />
+        </el-form-item>
+        <el-form-item 
+          label="确认密码" 
+          :label-width="formLabelWidth">
+          <el-input 
+            placeholder="请再次输入密码" 
+            type="password"
+            prop="password2"
+            v-model="userInfo.password2" 
+            :show-password="showPassword"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
 	</div>
 </template>
 
 <script>
   export default {
     data() {
+       var validatePass = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请输入密码'));
+          } else {
+            if (this.userInfo.password !== '') {
+              this.$refs.ruleForm.validateField('password2')
+            }
+            callback();
+          }
+        }
+        var validatePass2 = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请再次输入密码'))
+          } else if (value !== this.ruleForm.password) {
+            callback(new Error('两次输入密码不一致!'))
+          } else {
+            callback()
+          }
+        }
       return {
         tableData: [],
 				tablePageSize: 10,
 				tablePageTotal: 0,
 				input3: '',
         multipleSelection: [],
+        formLabelWidth: '200px',
         page : 1,
+        dialogFormVisible: false,
+        showPassword: true,
+        userInfo: {
+          name : '',
+          userName: '',
+          password: '',
+          password2: ''
+          
+        },
+        rules: {
+          pass: [
+            { validator: validatePass, trigger: 'blur' }
+          ],
+          checkPass: [
+            { validator: validatePass2, trigger: 'blur' }
+          ],
+        }
       }
     },
 
@@ -141,13 +229,6 @@
       },
       filterTag(key, row) {
         return row.status == key
-      },
-      filterHandler(value, row, column) {
-        console.log(value)
-        console.log(row)
-        console.log(column)
-        const property = column['property'];
-        return row[property] === value;
       },
       toggleSelection(rows) {
         if (rows) {
@@ -169,10 +250,11 @@
         this.loadData(val, tablePageSize)
       },
       edit(data){
-        console.log(data)
+        this.dialogFormVisible = true
+        this.userInfo = data
       },
       del(data) {
-        console.log(data)
+        this.userInfo = data
       }
     },
     created(){
