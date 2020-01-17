@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <v-head></v-head>
-        <v-sidebar></v-sidebar>
+        <v-sidebar :NavItem="items"></v-sidebar>
         <div class="content-box" :class="{'content-collapse':collapse}">
             <v-tags></v-tags>
             <div class="content">
@@ -25,8 +25,9 @@ export default {
     data() {
         return {
             tagsList: [],
-            collapse: false
-        };
+            collapse: false,
+            items: []
+        }
     },
     components: {
         vHead,
@@ -36,8 +37,119 @@ export default {
     created() {
         bus.$on('collapse-content', msg => {
             this.collapse = msg
-        });
-
+        })
+        const userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+        if (userInfo.role == 1) {
+          this.items = [
+            {
+                icon: 'el-icon-lx-home',
+                index: 'SupperAdmin',
+                title: '控制台'
+            },
+            {
+                icon: 'el-icon-lx-home',
+                index: 'WechatCustomer',
+                title: '用户管理'
+            },
+            {
+                icon: 'el-icon-lx-copy',
+                index: 'customer',
+                title: '客户管理'
+            },
+            {
+                icon: 'el-icon-lx-copy',
+                index: 'setting',
+                title: '系统设置'
+            }
+          ]
+        }else {
+          this.items = [
+                {
+                    icon: 'el-icon-lx-home',
+                    index: 'dashboard',
+                    title: '控制台'
+                },
+                {
+                    icon: 'el-icon-lx-copy',
+                    index: 'tabs',
+                    title: '客户管理',
+										subs: [
+											{
+												index: 'vip',
+												title: 'VIP管理'
+											},
+											{
+												index: 'customer',
+												title: '客户管理'
+											},
+										]
+                },
+								{
+								    icon: 'el-icon-lx-copy',
+								    index: 'order',
+								    title: '订单管理'
+								},
+                {
+                    icon: 'el-icon-lx-calendar',
+                    index: '3',
+                    title: '影院管理',
+                    subs: [
+                        {
+                            index: 'form',
+                            title: '场地管理'
+                        },
+                        {
+                            index: '3-2',
+                            title: '电影管理',
+                            subs: [
+                                {
+                                    index: 'move',
+                                    title: '电影管理'
+                                },
+                                {
+                                    index: 'markdown',
+                                    title: '电影库存管理'
+                                },
+                                {
+                                    index: 'markdown',
+                                    title: '电影排场'
+                                }
+                            ]
+                        },
+                        {
+                            index: 'upload',
+                            title: '电影院管理'
+                        }
+                    ]
+                },
+								{
+									icon: 'el-icon-pie-chart',
+									index: 'statics',
+									title: '数据统计',
+									subs: [
+										{
+											index: 'userStatics',
+											title: '用户统计',
+										},
+										{
+											index: 'orderStatics',
+											title: '电影统计',
+										},
+										{
+										    icon: 'el-icon-pie-chart',
+										    index: 'charts',
+										    title: 'schart图表'
+										}
+									]
+								},
+                {
+                    icon: 'el-icon-lx-warn',
+                    index: '7',
+                    title: '权限管理'
+                }
+            ]
+        }
+        
         // 只有在标签页列表里的页面才使用keep-alive，即关闭标签之后就不保存到内存中了。
         bus.$on('tags', msg => {
             let arr = [];
@@ -45,7 +157,7 @@ export default {
                 msg[i].name && arr.push(msg[i].name)
             }
             this.tagsList = arr
-        });
+        })
     }
 };
 </script>

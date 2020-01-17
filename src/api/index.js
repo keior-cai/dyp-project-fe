@@ -8,8 +8,18 @@
 //     })
 // }
 
-var baseUrl = 'http://localhost:8088/simplify'
+var baseUrl = 'http://localhost:9901/admin'
 
 export const API = {
-	AdminLogin : baseUrl + '/login/loginin'
+  ADMIN : {
+    AdminLogin : baseUrl + '/login/login',
+    AdminUseInfo : baseUrl + '/management/admin/getAdminInfo',
+    AdminLoadCustomer : baseUrl + '/management/admin/queryAdmin',
+    AdminLoadStaticsData : baseUrl + '/management/admin/getStatics',
+    AdmingetCount : baseUrl + '/management/admin/getCount',
+    AdminLoadWechatCustomer : baseUrl + '/management/customer/queryCustomer',
+  },
+  CUSTOMER : {
+    
+  }
 }

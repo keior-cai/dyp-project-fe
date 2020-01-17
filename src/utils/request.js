@@ -1,25 +1,46 @@
 import Axios from 'axios'
 
-export const Get = (url, data = {}, { loading = true } = {}) => {
+import { Message } from 'element-ui'
+
+export const Get = (url, data = {}) => {
   return new Promise((resolve, reject) => {
     Axios.get(url, {
-      params: data
+      params : data
     }).then(res => {
-      return resolve(res.data)
+      const data = res.data
+      if(data.code != 0) {
+        Message.error({
+          message : data.message,
+          showClose: true,
+          duration: 1500,
+        })
+      }else {
+        return resolve(data)
+      }
     }).catch(res => {
-      console.log('....')
+      Message.error('网络异常')
 		})
   })
 }
 
-export const Post = (url, data = {}, { loading = true } = {}) => {
+export const Post = (url, data = {}) => {
   return new Promise((resolve, reject) => {
     Axios.post(url, data , {
       timeout: 30000
     }).then(res => {
-      return resolve(res.data)
+      const data = res.data
+      if(data.code != 0) {
+        Message.error({
+          message : data.message,
+          showClose: true,
+          duration: 1500,
+        })
+      }else {
+        return resolve(data)
+      }
     }).catch(res => {
-      console.log('.....')
+      Message.error('网络异常')
+      // console.log(res)
     })
   })
 }

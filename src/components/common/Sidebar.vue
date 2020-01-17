@@ -10,7 +10,7 @@
             unique-opened
             router
         >
-            <template v-for="item in items">
+            <template v-for="item in NavItem">
                 <template v-if="item.subs">
                     <el-submenu :index="item.index" :key="item.index">
                         <template slot="title">
@@ -54,105 +54,28 @@ import bus from '../common/bus'
 export default {
     data() {
         return {
-            collapse: false,
-            items: [
-                {
-                    icon: 'el-icon-lx-home',
-                    index: 'dashboard',
-                    title: '控制台'
-                },
-                {
-                    icon: 'el-icon-lx-copy',
-                    index: 'tabs',
-                    title: '客户管理',
-										subs: [
-											{
-												index: 'vip',
-												title: 'VIP管理'
-											},
-											{
-												index: 'customer',
-												title: '客户管理'
-											},
-										]
-                },
-								{
-								    icon: 'el-icon-lx-copy',
-								    index: 'order',
-								    title: '订单管理'
-								},
-                {
-                    icon: 'el-icon-lx-calendar',
-                    index: '3',
-                    title: '影院管理',
-                    subs: [
-                        {
-                            index: 'form',
-                            title: '场地管理'
-                        },
-                        {
-                            index: '3-2',
-                            title: '电影管理',
-                            subs: [
-                                {
-                                    index: 'move',
-                                    title: '电影管理'
-                                },
-                                {
-                                    index: 'markdown',
-                                    title: '电影库存管理'
-                                },
-                                {
-                                    index: 'markdown',
-                                    title: '电影排场'
-                                }
-                            ]
-                        },
-                        {
-                            index: 'upload',
-                            title: '电影院管理'
-                        }
-                    ]
-                },
-								{
-									icon: 'el-icon-pie-chart',
-									index: 'statics',
-									title: '数据统计',
-									subs: [
-										{
-											index: 'userStatics',
-											title: '用户统计',
-										},
-										{
-											index: 'orderStatics',
-											title: '电影统计',
-										},
-										{
-										    icon: 'el-icon-pie-chart',
-										    index: 'charts',
-										    title: 'schart图表'
-										}
-									]
-								},
-                {
-                    icon: 'el-icon-lx-warn',
-                    index: '7',
-                    title: '权限管理'
-                }
-            ]
-        };
+            collapse: false
+        }
     },
     computed: {
         onRoutes() {
-            return this.$route.path.replace('/', '');
+          const userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+          if(userInfo.role ==1 ) {
+            return this.$route.path.replace('/', 'SupperAdmin')
+          }else {
+            return this.$route.path.replace('/', 'dashboard');
+          }
         }
     },
     created() {
         // 通过 Event Bus 进行组件间通信，来折叠侧边栏
         bus.$on('collapse', msg => {
-            this.collapse = msg;
-            bus.$emit('collapse-content', msg);
+            this.collapse = msg
+            bus.$emit('collapse-content', msg)
         });
+    },
+    props:{
+      NavItem : Array
     }
 };
 </script>

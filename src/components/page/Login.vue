@@ -33,7 +33,7 @@ export default {
         return {
             param: {
                 username: 'admin',
-                password: '123123',
+                password: '123456',
             },
             rules: {
                 username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
@@ -45,14 +45,29 @@ export default {
         submitForm() {
             this.$refs.login.validate(valid => {
                 if (valid) {
-									this.$POST('http://10.4.0.11/login', {username:this.param.username, password: this.param.password})
-									const role = localStorage.setItem('ms_username', 'admin')
-										this.$message.success('登录成功')
-										this.$router.push('/dashboard')
-                    // localStorage.setItem('ms_username', this.param.username)
+									this.$POST(this.$API.ADMIN.AdminLogin, 
+                    {username:this.param.username, password: this.param.password},
+                  ).then(res => {
+                    this.$message.success({
+                      message: '登录成功',
+                      showClose: true,
+                      duration: 1500
+                    })
+                    this.$GET(this.$API.ADMIN.AdminUseInfo, {})
+                    .then(res => {
+                      const userInfo = res.data
+                      this.userInfo = userInfo
+                      sessionStorage.setItem('userInfo',JSON.stringify(userInfo))
+                      if(userInfo.role == 1) {
+                        this.$router.push('/SupperAdmin')
+                      }else {
+                        this.$router.push('/dashboard')
+                      }
+                    })
+                  })
                 } else {
-                    this.$message.error('请输入账号和密码');
-                    return false;
+                    this.$message.error('请输入账号和密码')
+                    return false
                 }
             });
         },

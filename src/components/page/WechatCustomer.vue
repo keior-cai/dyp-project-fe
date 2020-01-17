@@ -33,37 +33,21 @@
 		    label="姓名"
 		    width="120">
 		  </el-table-column>
-      <el-table-column
-            prop="status"
-            label="状态"
-            :filters="[{ text: '正常', value: 0 }, { text: '禁用', value: 1 }]"
-            :filter-method="filterTag"
-            filter-placement="bottom-end">
-            <template slot-scope="scope">
-              <el-tag
-                :type="scope.row.status == 0  ? 'success' : 'danger'"
-                disable-transitions>
-                <span v-if="scope.row.status == 0">正常</span>
-                <span v-if="scope.row.status == 1">禁用</span>
-              </el-tag>
-            </template>
-      </el-table-column>
+		  <el-table-column
+		    prop="address"
+		    label="性别"
+		    show-overflow-tooltip>
+		  </el-table-column>
 		  <el-table-column
 		    label="用户类型"
 		    show-overflow-tooltip>
-		  <template slot-scope="scope">
-        <el-tag
-          :type="'primary'">
-          <span v-if="scope.row.role == 0">普通管理员</span>
-        </el-tag>
-      </template>
+		  <template slot-scope="scope"><span v-if="scope.row.role == 0">普通管理员</span></template>
       </el-table-column>
-      <el-table-column
-            prop="updateTime"
-            label="上次登录时间"
-            sortable
-          >
-      </el-table-column>
+		  <el-table-column
+		    prop="updateTime"
+		    label="上次登录时间"
+		    show-overflow-tooltip>
+		  </el-table-column>
       <el-table-column
         prop="createTime"
         label="创建时间"
@@ -73,35 +57,6 @@
         prop="ip"
         label="上次登录IP"
         show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column
-        label="操作"
-        show-overflow-tooltip>
-          <template slot-scope="scope">
-            <el-tooltip 
-              class="item" 
-              effect="dark" 
-              content="编辑"  
-              placement="right">
-              <el-button 
-                type="primary" 
-                icon="el-icon-edit" 
-                circle 
-                @click="edit(scope.row)"/>
-            </el-tooltip>
-            
-            <el-tooltip 
-              class="item" 
-              effect="dark" 
-              content="删除"
-              placement="right">
-              <el-button 
-                type="danger" 
-                icon="el-icon-delete"
-                @click="del(scope.row)"
-                circle />
-            </el-tooltip>
-          </template>
       </el-table-column>
 		</el-table>
 		<div class="block" style="text-align: right;">
@@ -127,29 +82,20 @@
 				tablePageTotal: 0,
 				input3: '',
         multipleSelection: [],
-        page : 1,
+        currentPage : 1,
       }
     },
 
     methods: {
       loadData(startTime = '', endTime = '') {
-        this.$GET(this.$API.ADMIN.AdminLoadCustomer, {page : this.page, size : this.tablePageSize})
+        this.$GET(this.$API.ADMIN.AdminLoadWechatCustomer, {page : this.currentPage, size : this.tablePageSize})
         .then(res => {
           this.tablePageTotal = res.data.total
           this.tableData = res.data.details
         })
       },
-      filterTag(key, row) {
-        return row.status == key
-      },
-      filterHandler(value, row, column) {
-        console.log(value)
-        console.log(row)
-        console.log(column)
-        const property = column['property'];
-        return row[property] === value;
-      },
       toggleSelection(rows) {
+        console.log(rows)
         if (rows) {
           rows.forEach(row => {
             this.$refs.multipleTable.toggleRowSelection(row);
@@ -159,20 +105,16 @@
         }
       },
       handleSelectionChange(val) {
+        console.log(val)
         this.multipleSelection = val;
       },
 			handleSizeChange(val) {
-			  this.loadData(this.page, this.tablePageSize)
+        this.tablePageSize = val
+			  this.loadData(this.currentPage, val)
 			},
 			handleCurrentChange(val) {
-				this.page = val
+				this.currentPage = val
         this.loadData(val, tablePageSize)
-      },
-      edit(data){
-        console.log(data)
-      },
-      del(data) {
-        console.log(data)
       }
     },
     created(){

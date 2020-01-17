@@ -35,7 +35,7 @@
                             <div class="grid-content grid-con-1">
                                 <i class="el-icon-lx-people grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">1234</div>
+                                    <div class="grid-num">{{statics.customerCount}}</div>
                                     <div>用户访问量</div>
                                 </div>
                             </div>
@@ -46,7 +46,7 @@
                             <div class="grid-content grid-con-2">
                                 <i class="el-icon-lx-notice grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">321</div>
+                                    <div class="grid-num">{{statics.systemCount}}</div>
                                     <div>系统消息</div>
                                 </div>
                             </div>
@@ -57,7 +57,7 @@
                             <div class="grid-content grid-con-3">
                                 <i class="el-icon-lx-goods grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">5000</div>
+                                    <div class="grid-num">{{statics.userCount}}</div>
                                     <div>数量</div>
                                 </div>
                             </div>
@@ -66,7 +66,7 @@
                 </el-row>
                 <el-card shadow="hover" style="height:403px;">
                     <div slot="header" class="clearfix">
-                        <span>待办事项</span>
+                        <span>操作记录</span>
                         <el-button style="float: right; padding: 3px 0" type="text">添加</el-button>
                     </div>
                     <el-table :data="todoList" :show-header="false" height="304" style="width: 100%;font-size:14px;">
@@ -138,35 +138,8 @@
                         status: true,
                     }
                 ],
-                data: [{
-                        name: '2018/09/04',
-                        value: 1083
-                    },
-                    {
-                        name: '2018/09/05',
-                        value: 941
-                    },
-                    {
-                        name: '2018/09/06',
-                        value: 1139
-                    },
-                    {
-                        name: '2018/09/07',
-                        value: 816
-                    },
-                    {
-                        name: '2018/09/08',
-                        value: 327
-                    },
-                    {
-                        name: '2018/09/09',
-                        value: 228
-                    },
-                    {
-                        name: '2018/09/10',
-                        value: 1065
-                    }
-                ],
+                data: [],
+                statics: {},
                 options: {
                     title: '最近七天每天的用户访问量',
                     showValue: false,
@@ -194,8 +167,10 @@
             }
         },
         created(){
+            this.loadStaticsData()
             this.handleListener()
-            this.changeDate()
+            this.loadStaticsCount()
+            // this.changeDate()
         },
         activated(){
             this.handleListener()
@@ -225,6 +200,18 @@
             renderChart(){
                 this.$refs.bar.renderChart()
                 this.$refs.line.renderChart()
+            },
+            loadStaticsData(){
+              this.$GET(this.$API.ADMIN.AdminLoadStaticsData)
+              .then(res => {
+                this.data = res.data.map(e => {return {name: `${e.year}/${e.mouth}/${e.day}`, value : e.count}})
+              })
+            },
+            loadStaticsCount(){
+              this.$GET(this.$API.ADMIN.AdmingetCount)
+              .then(res => {
+                this.statics = res.data
+              })
             }
         }
     }

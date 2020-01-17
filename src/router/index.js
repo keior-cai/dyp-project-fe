@@ -25,6 +25,11 @@ export default new Router({
                     meta: { title: '系统首页' }
                 },
                 {
+                    path: '/SupperAdmin',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/SupperAdmin.vue'),
+                    meta: { title: '系统首页' }
+                },
+                {
                     path: '/icon',
                     component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
                     meta: { title: '自定义图标' }
@@ -43,6 +48,11 @@ export default new Router({
                     path: '/customer',
                     component: () => import(/* webpackChunkName: "tabs" */ '../components/page/customer.vue'),
                     meta: { title: '客户管理' }
+                },
+                {
+                    path: '/WechatCustomer',
+                    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/WechatCustomer.vue'),
+                    meta: { title: '用户管理' }
                 },
                 {
                     path: '/form',
