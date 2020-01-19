@@ -47,17 +47,17 @@ export default {
                 title: '控制台'
             },
             {
-                icon: 'el-icon-lx-home',
+                icon: 'el-icon-user-solid',
                 index: 'WechatCustomer',
                 title: '用户管理'
             },
             {
-                icon: 'el-icon-lx-copy',
+                icon: 'el-icon-s-custom',
                 index: 'customer',
                 title: '客户管理'
             },
             {
-                icon: 'el-icon-lx-copy',
+                icon: 'el-icon-s-tools',
                 index: 'Setting',
                 title: '系统设置'
             }

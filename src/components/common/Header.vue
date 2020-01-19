@@ -68,7 +68,7 @@ export default {
         // 用户名下拉菜单选择事件
         handleCommand(command) {
             if (command == 'loginout') {
-                localStorage.removeItem('ms_username');
+                sessionStorage.removeItem('userInfo');
                 this.$router.push('/login');
             }
         },
@@ -117,6 +117,7 @@ export default {
     position: relative;
     box-sizing: border-box;
     width: 100%;
+    background-color: #409EFF;
     height: 70px;
     font-size: 22px;
     color: #fff;
@@ -126,6 +127,9 @@ export default {
     padding: 0 21px;
     cursor: pointer;
     line-height: 70px;
+}
+.collapse-btn:hover {
+  background-color: #409EFF;
 }
 .header .logo {
     float: left;

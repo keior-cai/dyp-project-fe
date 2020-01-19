@@ -17,6 +17,7 @@ export const API = {
     AdminLoadCustomer : baseUrl + '/management/admin/queryAdmin',
     AdminLoadStaticsData : baseUrl + '/management/admin/getStatics',
     AdmingetCount : baseUrl + '/management/admin/getCount',
+    AdminDelAdmin : baseUrl + '/management/admin/deleteAdmin',
     AdminLoadWechatCustomer : baseUrl + '/management/customer/queryCustomer',
   },
   CUSTOMER : {

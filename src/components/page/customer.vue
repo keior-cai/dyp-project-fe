@@ -1,18 +1,15 @@
 <template>
   <div>
-		<div>
-			<div style="margin-top: 15px;">
-			  <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-			    <el-button slot="append" icon="el-icon-search"></el-button>
-			  </el-input>
-			</div>
+		<div class="table-header">
+			 <el-button type="primary" plain @click="add()"><i class="el-icon-plus"></i>添加客户</el-button>
+       <el-button type="danger" plain><i class="el-icon-delete"></i>批删除客户</el-button>
 		</div>
 		<el-table
 		  ref="multipleTable"
 		  :data="tableData"
 		  tooltip-effect="dark"
       border
-		  style="width: 100%"
+		  style="width: 100%; background-color: #FFFFFF;"
 			highlight-current-row="true"
 		  @selection-change="handleSelectionChange">
 		  <el-table-column
@@ -109,6 +106,18 @@
                 size="mini"
                 @click="del(scope.row)"/>
             </el-tooltip>
+            <el-tooltip
+              class="item" 
+              effect="dark" 
+              content="激活"  
+              placement="right">
+              <el-button 
+                v-if="scope.row.status == 1"
+                type="primary" 
+                size="mini"
+                icon="el-icon-s-promotion"
+                @click="play(scope.row)"/>
+            </el-tooltip>
           </template>
       </el-table-column>
 		</el-table>
@@ -123,7 +132,7 @@
 		    :total="tablePageTotal">
 		  </el-pagination>
 		</div>
-    <el-dialog title="添加客户" :visible.sync="dialogFormVisible">
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="500px">
       <el-form :model="userInfo" status-icon :rules="rules" ref="ruleForm" label-width="100px">
         <el-form-item label="用户名" :label-width="formLabelWidth">
           <el-input 
@@ -160,6 +169,14 @@
             v-model="userInfo.password2" 
             :show-password="showPassword"/>
         </el-form-item>
+        <el-form-item label="用户状态">
+            <el-switch v-model="userInfo.status"/>
+        </el-form-item>
+        <el-form-item label="用户类型">
+            <el-select v-model="userInfo.role" placeholder="请选择">
+                <el-option key="普通客户" label="普通客户" value="0"></el-option>
+            </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -192,12 +209,12 @@
           }
         }
       return {
+        title: '',
         tableData: [],
 				tablePageSize: 10,
 				tablePageTotal: 0,
 				input3: '',
         multipleSelection: [],
-        formLabelWidth: '200px',
         page : 1,
         dialogFormVisible: false,
         showPassword: true,
@@ -250,11 +267,19 @@
         this.loadData(val, tablePageSize)
       },
       edit(data){
+        this.title = '修改客户信息'
         this.dialogFormVisible = true
         this.userInfo = data
       },
+      add(){
+        this.title = '添加客户'
+        this.dialogFormVisible = true
+      },
       del(data) {
         this.userInfo = data
+      },
+      play(data){
+        
       }
     },
     created(){
@@ -265,6 +290,15 @@
 
 <style scoped>
   .el-select .el-input {
-      width: 6.25rem;
-    }
+    width: 6.25rem;
+  }
+  .table-header {
+    background-color: #FFFFFF;
+    padding: 0.9375rem 0.625rem;
+    text-align: right;
+  }
+  .block {
+    background-color: #FFFFFF;
+    padding: 0.9375rem 0rem;
+  }
 </style>
