@@ -58,8 +58,23 @@ export default {
             },
             {
                 icon: 'el-icon-s-tools',
-                index: 'Setting',
-                title: '系统设置'
+                index: 'tabs',
+                title: '客户管理',
+            		subs: [
+            			{
+            				index: 'vip',
+            				title: '邮件配置'
+            			},
+                  {
+            				index: 'vip',
+            				title: '短信配置'
+            			},
+            			{
+            			    icon: 'el-icon-s-tools',
+            			    index: 'Setting',
+            			    title: '系统设置'
+            			}
+            		]
             }
           ]
         }else {

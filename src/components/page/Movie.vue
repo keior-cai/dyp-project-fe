@@ -127,7 +127,7 @@
 			}
 	  },
 		mounted() {
-			this.$GET(this.$API.ADMIN.AdminQueryMovie, {size : this.tablePageSize, page : this.tablePageTotal})
+			this.$GET(this.$API.ADMIN.AdminQueryMovie, {size : this.tablePageTotal, page : this.tablePageSize})
 			.then(res => {
 				console.info(res.data)
 				this.tableData = res.data.details

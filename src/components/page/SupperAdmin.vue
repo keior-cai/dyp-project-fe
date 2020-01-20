@@ -12,7 +12,7 @@
                         </div>
                     </div>
                     <div class="user-info-list">上次登录时间：<span>{{userInfo.updateTime}}</span></div>
-                    <div class="user-info-list">上次登录IP：<span>{{userInfo.ip}}</span></div>
+                    <div class="user-info-list">上次登录地址：<span>{{userInfo.ip}}</span></div>
                 </el-card>
                 <el-card shadow="hover" style="height:252px;">
                     <div slot="header" class="clearfix">
