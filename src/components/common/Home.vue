@@ -95,7 +95,7 @@ export default {
                     title: '影院管理',
                     subs: [
                         {
-                            index: 'form',
+                            index: 'space',
                             title: '场地管理'
                         },
                         {
@@ -103,13 +103,13 @@ export default {
                             title: '电影管理',
                             subs: [
                                 {
-                                    index: 'move',
+                                    index: 'movie',
                                     title: '电影管理'
                                 },
-                                {
-                                    index: 'markdown',
-                                    title: '电影库存管理'
-                                },
+                                // {
+                                //     index: 'markdown',
+                                //     title: '电影库存管理'
+                                // },
                                 {
                                     index: 'markdown',
                                     title: '电影排场'
@@ -118,7 +118,7 @@ export default {
                         },
                         {
                             index: 'upload',
-                            title: '电影院管理'
+                            title: '影院信息'
                         }
                     ]
                 },

@@ -19,6 +19,13 @@ export const API = {
     AdmingetCount : baseUrl + '/management/admin/getCount',
     AdminDelAdmin : baseUrl + '/management/admin/deleteAdmin',
     AdminLoadWechatCustomer : baseUrl + '/management/customer/queryCustomer',
+    AdminQuerySpace : baseUrl + '/management/space/querySpace',
+    AdminAddSpace : baseUrl + '/management/space/addSpace',
+    AdminDelSpace : baseUrl + '/management/space/DelSpace',
+    AdminQueryMovie : baseUrl + '/management/movie/queryMovie',
+    AdminAddMovie : baseUrl + '/management/movie/addMovie',
+    AdminUpdateMovie : baseUrl + '/management/movie/updateMovie',
+    AdminDelMovie : baseUrl + '/management/movie/delMovie',
   },
   CUSTOMER : {
     

@@ -66,14 +66,20 @@ export default new Router({
                 },
                 {
                     // 富文本编辑器组件
+                    path: '/space',
+                    component: () => import(/* webpackChunkName: "editor" */ '../components/page/Space.vue'),
+                    meta: { title: '场地管理' }
+                },
+                {
+                    // 富文本编辑器组件
                     path: '/editor',
                     component: () => import(/* webpackChunkName: "editor" */ '../components/page/VueEditor.vue'),
                     meta: { title: '富文本编辑器' }
                 },
 								{
 								    // 富文本编辑器组件
-								    path: '/move',
-								    component: () => import(/* webpackChunkName: "editor" */ '../components/page/move.vue'),
+								    path: '/movie',
+								    component: () => import(/* webpackChunkName: "editor" */ '../components/page/Movie.vue'),
 								    meta: { title: '电影管理' }
 								},
                 {

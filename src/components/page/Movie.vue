@@ -11,12 +11,11 @@
     	    type="selection"
     	    width="55">
     	  </el-table-column>
-<!--    	  <el-table-column
-    	    label="序号"
+   	  <el-table-column
+    	    label="ID"
 					width="180"
 					prop="id">
-					<template slot-scope="scope">{{ scope.row.index }}</template>
-    	  </el-table-column> -->
+    	  </el-table-column>
     	  <el-table-column
     	    label="电影名称"
 					prop="name"
@@ -49,6 +48,26 @@
     	    show-overflow-tooltip>
     	  </el-table-column>
     	  <el-table-column
+    	    prop="status"
+    	    label="状态"
+    	    show-overflow-tooltip>
+    	  </el-table-column>
+    	  <el-table-column
+    	    prop="director"
+    	    label="导演"
+    	    show-overflow-tooltip>
+    	  </el-table-column>
+    	  <el-table-column
+    	    prop="actor"
+    	    label="演员"
+    	    show-overflow-tooltip>
+    	  </el-table-column>
+        <el-table-column
+          prop="upTime"
+          label="上映时间"
+          show-overflow-tooltip>
+        </el-table-column>
+    	  <el-table-column
     	    prop="createTime"
     	    label="创建时间"
     	    show-overflow-tooltip>
@@ -78,8 +97,8 @@
 	  data() {
 	    return {
 	      tableData: [],
-				tablePageSize: 10,
-				tablePageTotal: 100,
+				tablePageSize: 1,
+				tablePageTotal: 10,
 				currentPage: 1,
 				input3: '',
 	      multipleSelection: []
@@ -108,10 +127,10 @@
 			}
 	  },
 		mounted() {
-			this.$GET('http://localhost:9901/admin/move/selectMove', {})
+			this.$GET(this.$API.ADMIN.AdminQueryMovie, {size : this.tablePageSize, page : this.tablePageTotal})
 			.then(res => {
 				console.info(res.data)
-				this.tableData = res.data
+				this.tableData = res.data.details
 			})
 			.catch(err => {
 				console.log(err)
