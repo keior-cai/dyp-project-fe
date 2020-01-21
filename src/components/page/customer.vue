@@ -7,6 +7,8 @@
           prefix-icon="el-icon-search"
           :style="{'width':'200px'}"
           v-model="input"
+          @clear="loadData()"
+          @blur="loadData()"
           clearable>
         </el-input>
           <el-date-picker
@@ -20,8 +22,26 @@
             :value-format="'yyyy-MM-dd'"
             @change="loadData()"
             @blur="loadData()"
+            @clear="loadData()"
             :picker-options="pickerOptions">
           </el-date-picker>
+          <el-select 
+            v-model="status" 
+            clearable 
+            :style="{'margin-left': '20px'}"
+            @change="loadData()"
+            placeholder="请选择">
+              <el-option
+                :key="'ACTIVE'"
+                :label="'正常'"
+                :value="'ACTIVE'">
+              </el-option>
+              <el-option
+                :key="'NOT_ACTIVE'"
+                :label="'禁用'"
+                :value="'NOT_ACTIVE'">
+              </el-option>
+            </el-select>
       </div>
 			<div class="table-header">
         <el-button type="primary" plain @click="add()"><i class="el-icon-plus"></i>添加客户</el-button>
@@ -210,6 +230,7 @@
 				tablePageTotal: 0,
         currentPage: 1,
 				input: '',
+        status: '',
         multipleSelection: [],
         page : 1,
         dialogFormVisible: false,
@@ -263,15 +284,17 @@
     },
     methods: {
       loadData(startTime = '', endTime = '') {
-        startTime = this.date[0] ? this.data[0] + ' 00:00:00' : ''
-        endTime = this.date[1] ? this.data[1] + ' 23:59:59' : ''
-        console.log(startTime)
+        if(this.date) {
+          startTime = this.date[0] ? this.date[0] + ' 00:00:00' : ''
+          endTime = this.date[1] ? this.date[1] + ' 23:59:59' : ''
+        }
         this.$GET(this.$API.ADMIN.AdminLoadCustomer, {
             page : this.page,
             size : this.tablePageSize, 
             userName : this.input, 
             startTime : startTime,
-            endTime : endTime
+            endTime : endTime,
+            status : this.status
           })
         .then(res => {
           this.tablePageTotal = res.data.total
