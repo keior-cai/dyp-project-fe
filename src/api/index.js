@@ -8,7 +8,7 @@
 //     })
 // }
 
-var baseUrl = 'http://localhost:9901/admin'
+var baseUrl = 'http://localhost/admin'
 
 export const API = {
   ADMIN : {
@@ -17,7 +17,8 @@ export const API = {
     AdminLoadCustomer : baseUrl + '/management/admin/queryAdmin',
     AdminLoadStaticsData : baseUrl + '/management/admin/getStatics',
     AdmingetCount : baseUrl + '/management/admin/getCount',
-    AdminDelAdmin : baseUrl + '/management/admin/deleteAdmin',
+    AdminInsertUpdate : baseUrl + '/management/admin/insertUpdate',
+    AdminActivedmin : baseUrl + '/management/admin/activeAdmin',
     AdminLoadWechatCustomer : baseUrl + '/management/customer/queryCustomer',
     AdminQuerySpace : baseUrl + '/management/space/querySpace',
     AdminAddSpace : baseUrl + '/management/space/addSpace',

@@ -59,7 +59,7 @@ export default {
             {
                 icon: 'el-icon-s-tools',
                 index: 'tabs',
-                title: '客户管理',
+                title: '系统设置',
             		subs: [
             			{
             				index: 'vip',

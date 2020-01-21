@@ -1,8 +1,32 @@
 <template>
   <div>
-		<div class="table-header">
-			 <el-button type="primary" plain @click="add()"><i class="el-icon-plus"></i>添加客户</el-button>
-       <el-button type="danger" plain><i class="el-icon-delete"></i>批删除客户</el-button>
+		<div class="header">
+      <div class="input">
+        <el-input
+          placeholder="请输入关键字"
+          prefix-icon="el-icon-search"
+          :style="{'width':'200px'}"
+          v-model="input"
+          clearable>
+        </el-input>
+          <el-date-picker
+            v-model="date"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :value-format="'yyyy-MM-dd'"
+            @change="loadData()"
+            @blur="loadData()"
+            :picker-options="pickerOptions">
+          </el-date-picker>
+      </div>
+			<div class="table-header">
+        <el-button type="primary" plain @click="add()"><i class="el-icon-plus"></i>添加客户</el-button>
+        <el-button type="danger" @click="delAll()" plain><i class="el-icon-delete"></i>批删除客户</el-button>
+      </div>
 		</div>
 		<el-table
 		  ref="multipleTable"
@@ -34,15 +58,13 @@
       <el-table-column
         prop="status"
         label="状态"
-        :filters="[{ text: '正常', value: 0 }, { text: '禁用', value: 1 }]"
-        :filter-method="filterTag"
         filter-placement="bottom-end">
           <template slot-scope="scope">
             <el-tag
-              :type="scope.row.status == 0  ? 'success' : 'danger'"
+              :type="scope.row.status == 'ACTIVE'  ? 'success' : 'danger'"
               disable-transitions>
-              <span v-if="scope.row.status == 0">正常</span>
-              <span v-if="scope.row.status == 1">禁用</span>
+              <span v-if="scope.row.status == 'ACTIVE'">正常</span>
+              <span v-if="scope.row.status == 'NOT_ACTIVE'">禁用</span>
             </el-tag>
           </template>
       </el-table-column>
@@ -106,18 +128,6 @@
                 size="mini"
                 @click="del(scope.row)"/>
             </el-tooltip>
-            <el-tooltip
-              class="item" 
-              effect="dark" 
-              content="激活"  
-              placement="right">
-              <el-button 
-                v-if="scope.row.status == 1"
-                type="primary" 
-                size="mini"
-                icon="el-icon-s-promotion"
-                @click="play(scope.row)"/>
-            </el-tooltip>
           </template>
       </el-table-column>
 		</el-table>
@@ -134,16 +144,16 @@
 		</div>
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="500px">
       <el-form :model="userInfo" status-icon :rules="rules" ref="ruleForm" label-width="100px">
-        <el-form-item label="用户名" :label-width="formLabelWidth">
+        <el-form-item label="用户名">
           <el-input 
             v-model="userInfo.userName" 
             autocomplete="off" 
             placeholder="请输入用户名"
             maxlength="20"
             show-word-limit
-            :disabled="userInfo.userName"/>
+            :disabled="userInfo.userUpdate"/>
         </el-form-item>
-        <el-form-item label="姓名" :label-width="formLabelWidth">
+        <el-form-item label="姓名">
           <el-input
             v-model="userInfo.name"
             maxlength="20"
@@ -151,7 +161,7 @@
             autocomplete="off" 
             placeholder="请输姓名"/>
         </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
+        <el-form-item label="密码">
           <el-input 
             placeholder="请输入密码"
             type="password"
@@ -159,28 +169,13 @@
             prop="password"
             :show-password="showPassword" />
         </el-form-item>
-        <el-form-item 
-          label="确认密码" 
-          :label-width="formLabelWidth">
-          <el-input 
-            placeholder="请再次输入密码" 
-            type="password"
-            prop="password2"
-            v-model="userInfo.password2" 
-            :show-password="showPassword"/>
-        </el-form-item>
         <el-form-item label="用户状态">
-            <el-switch v-model="userInfo.status"/>
-        </el-form-item>
-        <el-form-item label="用户类型">
-            <el-select v-model="userInfo.role" placeholder="请选择">
-                <el-option key="普通客户" label="普通客户" value="0"></el-option>
-            </el-select>
+            <el-switch v-model="userInfo.statueTmp"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
 	</div>
@@ -213,7 +208,8 @@
         tableData: [],
 				tablePageSize: 10,
 				tablePageTotal: 0,
-				input3: '',
+        currentPage: 1,
+				input: '',
         multipleSelection: [],
         page : 1,
         dialogFormVisible: false,
@@ -222,9 +218,10 @@
           name : '',
           userName: '',
           password: '',
-          password2: ''
           
         },
+        date : [],
+        ids : [],
         rules: {
           pass: [
             { validator: validatePass, trigger: 'blur' }
@@ -232,13 +229,50 @@
           checkPass: [
             { validator: validatePass2, trigger: 'blur' }
           ],
+        },
+        pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end]);
+            }
+          }, 
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          }, 
+          {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
         }
       }
     },
-
     methods: {
       loadData(startTime = '', endTime = '') {
-        this.$GET(this.$API.ADMIN.AdminLoadCustomer, {page : this.page, size : this.tablePageSize})
+        startTime = this.date[0] ? this.data[0] + ' 00:00:00' : ''
+        endTime = this.date[1] ? this.data[1] + ' 23:59:59' : ''
+        console.log(startTime)
+        this.$GET(this.$API.ADMIN.AdminLoadCustomer, {
+            page : this.page,
+            size : this.tablePageSize, 
+            userName : this.input, 
+            startTime : startTime,
+            endTime : endTime
+          })
         .then(res => {
           this.tablePageTotal = res.data.total
           this.tableData = res.data.details
@@ -257,29 +291,71 @@
         }
       },
       handleSelectionChange(val) {
-        this.multipleSelection = val;
+        this.multipleSelection = val
+        this.ids = val.map(e => e.id)
       },
 			handleSizeChange(val) {
 			  this.loadData(this.page, this.tablePageSize)
 			},
 			handleCurrentChange(val) {
 				this.page = val
-        this.loadData(val, tablePageSize)
+        this.loadData(val, this.tablePageSize)
       },
       edit(data){
         this.title = '修改客户信息'
         this.dialogFormVisible = true
         this.userInfo = data
+        this.userInfo.userUpdate = true
+        this.userInfo.statueTmp = this.userInfo.status == 'ACTIVE' ? true : false
+        this.userInfo.roleTmp = this.userInfo.role == 0 ? '普通客户' : ''
       },
       add(){
+        this.userInfo = {
+          userUpdate: false
+        }
         this.title = '添加客户'
         this.dialogFormVisible = true
       },
       del(data) {
         this.userInfo = data
+        this.$POST(this.$API.ADMIN.AdminInsertUpdate, {id : this.userInfo.id, deleted : 1})
+        .then(res => {
+           this.$message.success('删除成功')
+           this.loadData()
+           this.dialogFormVisible = false
+        })
+      },
+      delAll(){
+        this.ids.forEach(e=> {
+          this.$POST(this.$API.ADMIN.AdminInsertUpdate, {id : e, deleted : 1})
+        })
+        this.$message.success('批量删除成功')
+        this.loadData()
       },
       play(data){
         
+      },
+      submit(){
+        console.log(this.userInfo)
+        this.$refs.ruleForm.validate(res => {
+          if(res) {
+            const data = {
+              id : this.userInfo.id,
+              status: this.userInfo.statueTmp ? 'ACTIVE' : 'NOT_ACTIVE',
+              deleted : 0,
+              role : 0,
+              userName : this.userInfo.userName,
+              name : this.userInfo.name,
+              password : this.userInfo.password
+            }
+            this.$POST(this.$API.ADMIN.AdminInsertUpdate, data)
+            .then(res => {
+               this.$message.success('修改成功')
+               this.loadData()
+               this.dialogFormVisible = false
+            })
+          }
+        })
       }
     },
     created(){
@@ -292,9 +368,22 @@
   .el-select .el-input {
     width: 6.25rem;
   }
-  .table-header {
+  .input {
+    display: inline-block;
+    text-align: left;
+    float: left;
+  }
+  .block {
+    padding: 0rem;
+  }
+  .el-date-editor {
+    margin-left: 3.125rem;
+  }
+  .header {
     background-color: #FFFFFF;
     padding: 0.9375rem 0.625rem;
+  }
+  .table-header {
     text-align: right;
   }
   .block {
