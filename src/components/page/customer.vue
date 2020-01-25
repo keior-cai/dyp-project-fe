@@ -51,6 +51,7 @@
 		<el-table
 		  ref="multipleTable"
 		  :data="tableData"
+			v-loading="loading"
 		  tooltip-effect="dark"
       border
 		  style="width: 100%; background-color: #FFFFFF;"
@@ -230,6 +231,7 @@
 				tablePageTotal: 0,
         currentPage: 1,
 				input: '',
+				loading: false,
         status: '',
         multipleSelection: [],
         page : 1,
@@ -284,6 +286,7 @@
     },
     methods: {
       loadData(startTime = '', endTime = '') {
+				this.loading = true
         if(this.date) {
           startTime = this.date[0] ? this.date[0] + ' 00:00:00' : ''
           endTime = this.date[1] ? this.date[1] + ' 23:59:59' : ''
@@ -299,7 +302,11 @@
         .then(res => {
           this.tablePageTotal = res.data.total
           this.tableData = res.data.details
+					this.loading = false
         })
+				.catch(res => {
+					this.loading = false
+				})
       },
       filterTag(key, row) {
         return row.status == key

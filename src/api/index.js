@@ -8,7 +8,7 @@
 //     })
 // }
 
-var baseUrl = 'http://localhost/admin'
+var baseUrl = 'http://localhost:9901/admin'
 
 export const API = {
   ADMIN : {
@@ -22,7 +22,8 @@ export const API = {
     AdminLoadWechatCustomer : baseUrl + '/management/customer/queryCustomer',
     AdminQuerySpace : baseUrl + '/management/space/querySpace',
     AdminAddSpace : baseUrl + '/management/space/addSpace',
-    AdminDelSpace : baseUrl + '/management/space/DelSpace',
+    AdminInsertUpdateSpace : baseUrl + '/management/space/insertUpdate',
+    AdminDelSpace : baseUrl + '/management/space/delSpace',
     AdminQueryMovie : baseUrl + '/management/movie/queryMovie',
     AdminAddMovie : baseUrl + '/management/movie/addMovie',
     AdminUpdateMovie : baseUrl + '/management/movie/updateMovie',

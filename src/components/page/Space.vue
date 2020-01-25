@@ -1,12 +1,57 @@
 <template>
   <div>
-		<div class="table-header">
-			 <el-button type="primary" plain @click="add()"><i class="el-icon-plus"></i>添加客户</el-button>
-       <el-button type="danger" plain><i class="el-icon-delete"></i>批删除客户</el-button>
-		</div>
+  	<div class="header">
+      <div class="input">
+        <el-input
+          placeholder="请输入关键字"
+          prefix-icon="el-icon-search"
+          :style="{'width':'200px'}"
+          v-model="input"
+          @clear="loadData()"
+          @blur="loadData()"
+          clearable>
+        </el-input>
+          <el-date-picker
+            v-model="date"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :value-format="'yyyy-MM-dd'"
+            @change="loadData()"
+            @blur="loadData()"
+            @clear="loadData()"
+            :picker-options="pickerOptions">
+          </el-date-picker>
+          <el-select 
+            v-model="status" 
+            clearable 
+            :style="{'margin-left': '20px'}"
+            @change="loadData()"
+            placeholder="请选择">
+              <el-option
+                :key="'ACTIVE'"
+                :label="'正常'"
+                :value="'ACTIVE'">
+              </el-option>
+              <el-option
+                :key="'NOT_ACTIVE'"
+                :label="'禁用'"
+                :value="'NOT_ACTIVE'">
+              </el-option>
+            </el-select>
+      </div>
+  		<div class="table-header">
+        <el-button type="primary" plain @click="add()"><i class="el-icon-plus"></i>添加客场地</el-button>
+        <el-button type="danger" @click="delAll()" plain><i class="el-icon-delete"></i>批删除场地</el-button>
+      </div>
+  	</div>
 		<el-table
 		  ref="multipleTable"
 		  :data="tableData"
+			v-loading="loading"
 		  tooltip-effect="dark"
       border
 		  style="width: 100%; background-color: #FFFFFF;"
@@ -22,10 +67,15 @@
 		    <template slot-scope="scope">{{ scope.row.id }}</template>
 		  </el-table-column>
 		  <el-table-column
+				prop="address"
 		    label="位置"
 		    width="120">
-		    <template slot-scope="scope">{{ scope.row.address }}</template>
 		  </el-table-column>
+			<el-table-column
+				prop="name"
+			  label="名字"
+			  width="120">
+			</el-table-column>
 		  <el-table-column
 		    prop="total"
 		    label="容量(人数)"
@@ -34,15 +84,13 @@
       <el-table-column
         prop="status"
         label="状态"
-        :filters="[{ text: '正常', value: 0 }, { text: '禁用', value: 1 }]"
-        :filter-method="filterTag"
         filter-placement="bottom-end">
           <template slot-scope="scope">
             <el-tag
-              :type="scope.row.status == 0  ? 'success' : 'danger'"
+              :type="scope.row.status == 'ACTIVE'  ? 'success' : 'danger'"
               disable-transitions>
-              <span v-if="scope.row.status == 0">正常</span>
-              <span v-if="scope.row.status == 1">禁用</span>
+              <span v-if="scope.row.status == 'ACTIVE'">正常</span>
+              <span v-if="scope.row.status == 'NOT_ACTIVE'">禁用</span>
             </el-tag>
           </template>
       </el-table-column>
@@ -108,53 +156,37 @@
 		</div>
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="500px">
       <el-form :model="userInfo" status-icon :rules="rules" ref="ruleForm" label-width="100px">
-        <el-form-item label="用户名" :label-width="formLabelWidth">
+        <el-form-item label="位置" >
           <el-input 
-            v-model="userInfo.userName" 
+            v-model="userInfo.address" 
             autocomplete="off" 
-            placeholder="请输入用户名"
+            placeholder="请输入场地位置"
             maxlength="20"
-            show-word-limit
-            :disabled="userInfo.userName"/>
+            show-word-limit/>
         </el-form-item>
-        <el-form-item label="姓名" :label-width="formLabelWidth">
+				<el-form-item label="场地名称" >
+				  <el-input 
+				    v-model="userInfo.name" 
+				    autocomplete="off" 
+				    placeholder="请输入场地名称"
+				    maxlength="20"
+				    show-word-limit
+				    :disabled="userInfo.update"/>
+				</el-form-item>
+        <el-form-item label="容量" >
           <el-input
-            v-model="userInfo.name"
-            maxlength="20"
-            show-word-limit
+            v-model="userInfo.total"
+						type="number"
             autocomplete="off" 
-            placeholder="请输姓名"/>
+            placeholder="请输场地"/>
         </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input 
-            placeholder="请输入密码"
-            type="password"
-            v-model="userInfo.password" 
-            prop="password"
-            :show-password="showPassword" />
-        </el-form-item>
-        <el-form-item 
-          label="确认密码" 
-          :label-width="formLabelWidth">
-          <el-input 
-            placeholder="请再次输入密码" 
-            type="password"
-            prop="password2"
-            v-model="userInfo.password2" 
-            :show-password="showPassword"/>
-        </el-form-item>
-        <el-form-item label="用户状态">
-            <el-switch v-model="userInfo.status"/>
-        </el-form-item>
-        <el-form-item label="用户类型">
-            <el-select v-model="userInfo.role" placeholder="请选择">
-                <el-option key="普通客户" label="普通客户" value="0"></el-option>
-            </el-select>
+        <el-form-item label="状态">
+            <el-switch v-model="tmpStatus"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button @click="qx">取 消</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
 	</div>
@@ -163,31 +195,15 @@
 <script>
   export default {
     data() {
-       var validatePass = (rule, value, callback) => {
-          if (value === '') {
-            callback(new Error('请输入密码'));
-          } else {
-            if (this.userInfo.password !== '') {
-              this.$refs.ruleForm.validateField('password2')
-            }
-            callback();
-          }
-        }
-        var validatePass2 = (rule, value, callback) => {
-          if (value === '') {
-            callback(new Error('请再次输入密码'))
-          } else if (value !== this.ruleForm.password) {
-            callback(new Error('两次输入密码不一致!'))
-          } else {
-            callback()
-          }
-        }
       return {
         title: '',
         tableData: [],
 				tablePageSize: 10,
 				tablePageTotal: 0,
-				input3: '',
+				input: '',
+				loading: false,
+				ids: [],
+				date: [],
         multipleSelection: [],
         page : 1,
         dialogFormVisible: false,
@@ -196,27 +212,36 @@
           name : '',
           userName: '',
           password: '',
-          password2: ''
-          
+          password2: '',
+          update: false,
         },
-        rules: {
-          pass: [
-            { validator: validatePass, trigger: 'blur' }
-          ],
-          checkPass: [
-            { validator: validatePass2, trigger: 'blur' }
-          ],
-        }
+				tmpStatus: 0,
       }
     },
 
     methods: {
       loadData(startTime = '', endTime = '') {
-        this.$GET(this.$API.ADMIN.AdminQuerySpace, {page : this.page, size : this.tablePageSize})
+				this.loading = true
+				if(this.date) {
+				  startTime = this.date[0] ? this.date[0] + ' 00:00:00' : ''
+				  endTime = this.date[1] ? this.date[1] + ' 23:59:59' : ''
+				}
+        this.$GET(this.$API.ADMIN.AdminQuerySpace, {
+						page : this.page,
+						size : this.tablePageSize,
+						name : this.input,
+						startTime : startTime,
+						endTime : endTime,
+						status : this.status
+					})
         .then(res => {
           this.tablePageTotal = res.data.total
           this.tableData = res.data.details
+					this.loading = false
         })
+				.catch(res => {
+					this.loading = false
+				})
       },
       filterTag(key, row) {
         return row.status == key
@@ -224,33 +249,66 @@
       toggleSelection(rows) {
         if (rows) {
           rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
+            this.$refs.multipleTable.toggleRowSelection(row)
           });
         } else {
-          this.$refs.multipleTable.clearSelection();
+          this.$refs.multipleTable.clearSelection()
         }
       },
       handleSelectionChange(val) {
-        this.multipleSelection = val;
+        this.ids = val.map(e => e.id)
       },
 			handleSizeChange(val) {
-			  this.loadData(this.page, this.tablePageSize)
+				this.tablePageSize = val
+			  this.loadData()
 			},
 			handleCurrentChange(val) {
 				this.page = val
-        this.loadData(val, tablePageSize)
+        this.loadData()
       },
       edit(data){
-        this.title = '修改客户信息'
+        this.title = '修改场地信息'
         this.dialogFormVisible = true
         this.userInfo = data
+				this.tmpStatus = data.status == 'ACTIVE' 
+				this.userInfo.update = true
+				console.log(this.userInfo)
       },
+			qx() {
+				this.dialogFormVisible = false
+				this.loadData()
+			},
+			submit() {
+				this.userInfo.status = this.tmpStatus ? 'ACTIVE' : 'NOT_ACTIVE'
+				this.$POST(this.$API.ADMIN.AdminInsertUpdateSpace, this.userInfo)
+				.then(res => {
+					if(this.update){
+						this.$message.success('更新成功')
+					}else {
+						this.$message.success('添加成功')
+					}
+					this.loadData()
+				})
+				this.dialogFormVisible = false
+			},
+			delAll(){
+				this.ids.forEach(e=> {
+					this.$POST(this.$API.ADMIN.AdminDelSpace+`/${e}`)
+				})
+				this.$message.success('批量删除成功')
+			},
       add(){
-        this.title = '添加客户'
+				this.userInfo = {}
+        this.title = '添加场地'
         this.dialogFormVisible = true
+				this.userInfo.update = false
       },
       del(data) {
         this.userInfo = data
+				this.$POST(this.$API.ADMIN.AdminDelSpace+`/${data.id}`).then(res => {
+					this.$message.success('删除成功')
+				})
+				this.loadData()
       },
       play(data){
         
@@ -266,9 +324,22 @@
   .el-select .el-input {
     width: 6.25rem;
   }
-  .table-header {
+  .input {
+    display: inline-block;
+    text-align: left;
+    float: left;
+  }
+  .block {
+    padding: 0rem;
+  }
+  .el-date-editor {
+    margin-left: 3.125rem;
+  }
+  .header {
     background-color: #FFFFFF;
     padding: 0.9375rem 0.625rem;
+  }
+  .table-header {
     text-align: right;
   }
   .block {

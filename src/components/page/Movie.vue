@@ -1,8 +1,57 @@
 <template>
     <div>
+			<div class="header">
+			  <div class="input">
+			    <el-input
+			      placeholder="请输入关键字"
+			      prefix-icon="el-icon-search"
+			      :style="{'width':'200px'}"
+			      v-model="input"
+			      @clear="loadData()"
+			      @blur="loadData()"
+			      clearable>
+			    </el-input>
+			      <el-date-picker
+			        v-model="date"
+			        type="daterange"
+			        align="right"
+			        unlink-panels
+			        range-separator="至"
+			        start-placeholder="开始日期"
+			        end-placeholder="结束日期"
+			        :value-format="'yyyy-MM-dd'"
+			        @change="loadData()"
+			        @blur="loadData()"
+			        @clear="loadData()"
+			        :picker-options="pickerOptions">
+			      </el-date-picker>
+			      <el-select 
+			        v-model="status" 
+			        clearable 
+			        :style="{'margin-left': '20px'}"
+			        @change="loadData()"
+			        placeholder="请选择">
+			          <el-option
+			            :key="'ACTIVE'"
+			            :label="'正常'"
+			            :value="'ACTIVE'">
+			          </el-option>
+			          <el-option
+			            :key="'NOT_ACTIVE'"
+			            :label="'禁用'"
+			            :value="'NOT_ACTIVE'">
+			          </el-option>
+			        </el-select>
+			  </div>
+				<div class="table-header">
+			    <el-button type="primary" plain @click="add()"><i class="el-icon-plus"></i>添加电影</el-button>
+			    <el-button type="danger" @click="delAll()" plain><i class="el-icon-delete"></i>批删除电影</el-button>
+			  </div>
+			</div>
     	<el-table
     	  ref="multipleTable"
     	  :data="tableData"
+				v-loading="loading"
     	  tooltip-effect="dark"
     	  style="width: 100%"
     		highlight-current-row="true"
@@ -100,7 +149,8 @@
 				tablePageSize: 1,
 				tablePageTotal: 10,
 				currentPage: 1,
-				input3: '',
+				input: '',
+				loading: false,
 	      multipleSelection: []
 	    }
 	  },
@@ -109,10 +159,10 @@
 	    toggleSelection(rows) {
 	      if (rows) {
 	        rows.forEach(row => {
-	          this.$refs.multipleTable.toggleRowSelection(row);
+	          this.$refs.multipleTable.toggleRowSelection(row)
 	        });
 	      } else {
-	        this.$refs.multipleTable.clearSelection();
+	        this.$refs.multipleTable.clearSelection()
 	      }
 	    },
 	    handleSelectionChange(val) {
@@ -123,13 +173,12 @@
 			},
 			handleCurrentChange(val) {
 				
-				console.log(`当前页: ${val}`);
+				console.log(`当前页: ${val}`)
 			}
 	  },
 		mounted() {
 			this.$GET(this.$API.ADMIN.AdminQueryMovie, {size : this.tablePageTotal, page : this.tablePageSize})
 			.then(res => {
-				console.info(res.data)
 				this.tableData = res.data.details
 			})
 			.catch(err => {
@@ -139,7 +188,32 @@
 	}
 </script>
 <style scoped>
-    .editor-btn{
-        margin-top: 20px;
-    }
+  .editor-btn{
+    margin-top: 20px;
+  }
+	.el-select .el-input {
+	  width: 6.25rem;
+	}
+	.input {
+	  display: inline-block;
+	  text-align: left;
+	  float: left;
+	}
+	.block {
+	  padding: 0rem;
+	}
+	.el-date-editor {
+	  margin-left: 3.125rem;
+	}
+	.header {
+	  background-color: #FFFFFF;
+	  padding: 0.9375rem 0.625rem;
+	}
+	.table-header {
+	  text-align: right;
+	}
+	.block {
+	  background-color: #FFFFFF;
+	  padding: 0.9375rem 0rem;
+	}
 </style>

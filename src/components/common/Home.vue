@@ -94,7 +94,7 @@ export default {
 												title: 'VIP管理'
 											},
 											{
-												index: 'customer',
+												index: 'WechatCustomer',
 												title: '客户管理'
 											},
 										]
