@@ -16,7 +16,7 @@
             type="daterange"
             align="right"
             unlink-panels
-            range-separator="至"
+            range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             :value-format="'yyyy-MM-dd'"
@@ -76,6 +76,10 @@
 		    label="姓名"
 		    width="120">
 		  </el-table-column>
+			<el-table-column
+			  prop="phone"
+			  label="手机号码">
+			</el-table-column>
       <el-table-column
         prop="status"
         label="状态"
@@ -101,6 +105,8 @@
       </el-table-column>
       <el-table-column
             label="上次登录时间"
+						width="135"
+						show-overflow-tooltip
             sortable>
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
@@ -109,6 +115,7 @@
       </el-table-column>
       <el-table-column
         label="创建时间"
+				width="135"
         show-overflow-tooltip>
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
@@ -124,6 +131,7 @@
         label="操作"
         fixed="right"
         highlight-current-row
+				width="180"
         show-overflow-tooltip>
           <template slot-scope="scope">
             <el-tooltip 
@@ -137,7 +145,17 @@
                 icon="el-icon-edit"
                 @click="edit(scope.row)"/>
             </el-tooltip>
-            
+						<el-tooltip
+						  class="item" 
+						  effect="dark" 
+						  content="电影院信息"
+						  placement="right">
+						  <el-button 
+						    type="success" 
+						    icon="el-icon-more"
+						    size="mini"
+						    @click="info(scope.row)"/>
+						</el-tooltip>
             <el-tooltip 
               class="item" 
               effect="dark" 
@@ -182,6 +200,13 @@
             autocomplete="off" 
             placeholder="请输姓名"/>
         </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input
+            v-model="userInfo.phone"
+						type="phone"
+            autocomplete="off" 
+            placeholder="请输手机号码"/>
+        </el-form-item>
         <el-form-item label="密码">
           <el-input 
             placeholder="请输入密码"
@@ -199,6 +224,29 @@
         <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
+		<!-- 电影院信息 -->
+		<el-dialog title="电影院信息" :visible.sync="infoDialog" width="500px">
+		  <el-form :model="movieInfo" status-icon ref="ruleForm" label-width="100px">
+		    <el-form-item label="电影院名称">
+		      <el-input 
+		        v-model="movieInfo.name" 
+		        autocomplete="off" 
+		        placeholder="请输入电影院名称"
+		        maxlength="20"
+		        show-word-limit/>
+		    </el-form-item>
+		    <el-form-item label="电影院地址">
+		      <el-input
+		        v-model="movieInfo.address"
+		        autocomplete="off" 
+		        placeholder="请输电影院地址"/>
+		    </el-form-item>
+		  </el-form>
+		  <div slot="footer" class="dialog-footer">
+		    <el-button @click="infoDialog = false">取 消</el-button>
+		    <el-button type="primary" @click="infoSubmit">确 定</el-button>
+		  </div>
+		</el-dialog>
 	</div>
 </template>
 
@@ -243,8 +291,11 @@
           password: '',
           
         },
+				id: '',
+				movieInfo: {},
         date : [],
         ids : [],
+				infoDialog: false,
         rules: {
           pass: [
             { validator: validatePass, trigger: 'blur' }
@@ -320,6 +371,26 @@
           this.$refs.multipleTable.clearSelection();
         }
       },
+			info(row){
+				this.id = row.id
+				if(row.info){
+					this.movieInfo = JSON.parse(row.info)
+				}else{
+					this.movieInfo = {}
+				}
+				this.infoDialog = true
+			},
+			infoSubmit(){
+				this.$POST(this.$API.ADMIN.AdminInsertUpdate, {
+					id: this.id,
+					info: JSON.stringify(this.movieInfo)
+				})
+				.then(res => {
+					this.$message.success('修改成功')
+				})
+				this.infoDialog = false
+				this.loadData()
+			},
       handleSelectionChange(val) {
         this.multipleSelection = val
         this.ids = val.map(e => e.id)
@@ -366,7 +437,6 @@
         
       },
       submit(){
-        console.log(this.userInfo)
         this.$refs.ruleForm.validate(res => {
           if(res) {
             const data = {
@@ -376,7 +446,8 @@
               role : 0,
               userName : this.userInfo.userName,
               name : this.userInfo.name,
-              password : this.userInfo.password
+              password : this.userInfo.password,
+							phone: this.userInfo.phone
             }
             this.$POST(this.$API.ADMIN.AdminInsertUpdate, data)
             .then(res => {

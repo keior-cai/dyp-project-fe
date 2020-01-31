@@ -26,10 +26,12 @@ export const API = {
     AdminDelSpace : baseUrl + '/management/space/delSpace',
     AdminQueryMovie : baseUrl + '/management/movie/queryMovie',
     AdminAddMovie : baseUrl + '/management/movie/addMovie',
+    AdminInsertUpdateMovie : baseUrl + '/management/movie/insertUpdate',
     AdminUpdateMovie : baseUrl + '/management/movie/updateMovie',
     AdminDelMovie : baseUrl + '/management/movie/delMovie',
   },
   CUSTOMER : {
     
-  }
+  },
+	UPLOADURL : 'http://47.106.78.139:8012/tame/dfs/uploadByFile',
 }

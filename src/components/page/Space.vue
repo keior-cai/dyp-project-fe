@@ -16,7 +16,7 @@
             type="daterange"
             align="right"
             unlink-panels
-            range-separator="至"
+            range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             :value-format="'yyyy-MM-dd'"
@@ -115,6 +115,7 @@
         label="操作"
         fixed="right"
         highlight-current-row
+				width="185"
         show-overflow-tooltip>
           <template slot-scope="scope">
             <el-tooltip 
@@ -128,7 +129,17 @@
                 icon="el-icon-edit"
                 @click="edit(scope.row)"/>
             </el-tooltip>
-            
+            <el-tooltip
+              class="item" 
+              effect="dark" 
+              content="场地信息"
+              placement="right">
+              <el-button 
+                type="success" 
+                icon="el-icon-more"
+                size="mini"
+                @click="info(scope.row)"/>
+            </el-tooltip>
             <el-tooltip 
               class="item" 
               effect="dark" 
@@ -189,6 +200,22 @@
         <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
+		<el-dialog :title="`场地信息,场地位置:${size}`" :visible.sync="infoDialog" width="500px">
+			<div v-for="(item, index) in spaceList" :key="item" :index="index" style="text-align: center;">
+				<div v-for="i in item" :key="i" :class="{
+					'infoItem': true,
+					'color': i
+				}"/>
+				<div class="infoItem infoAdd-item" @click="infoAdd(index)"><i class="el-icon-plus"/></div>
+				<div class="infoItem infoAdd-item" @click="infoDel(index)"><i class="el-icon-minus"/></div>
+			</div>
+			<div @click="infoAddLine" class="line">添加一排</div>
+		  </el-form>
+		  <div slot="footer" class="dialog-footer">
+		    <el-button @click="qxInfo">取 消</el-button>
+		    <el-button type="primary" @click="submit">确 定</el-button>
+		  </div>
+		</el-dialog>
 	</div>
 </template>
 
@@ -208,6 +235,8 @@
         page : 1,
         dialogFormVisible: false,
         showPassword: true,
+				infoDialog: false,
+				spaceList: [[]],
         userInfo: {
           name : '',
           userName: '',
@@ -216,6 +245,7 @@
           update: false,
         },
 				tmpStatus: 0,
+				size: 0,
       }
     },
 
@@ -274,9 +304,15 @@
 				this.userInfo.update = true
 				console.log(this.userInfo)
       },
+			info(row){
+				this.infoDialog = true
+			},
 			qx() {
 				this.dialogFormVisible = false
 				this.loadData()
+			},
+			qxInfo(){
+				this.infoDialog = false
 			},
 			submit() {
 				this.userInfo.status = this.tmpStatus ? 'ACTIVE' : 'NOT_ACTIVE'
@@ -303,6 +339,17 @@
         this.dialogFormVisible = true
 				this.userInfo.update = false
       },
+			infoAddLine(){
+				this.spaceList.push([])
+			},
+			infoAdd(item){
+				this.spaceList[item].push(0)
+				this.size++
+			},
+			infoDel(item){
+				this.spaceList[item].pop()
+				this.size--
+			},
       del(data) {
         this.userInfo = data
 				this.$POST(this.$API.ADMIN.AdminDelSpace+`/${data.id}`).then(res => {
@@ -324,6 +371,15 @@
   .el-select .el-input {
     width: 6.25rem;
   }
+	.line{
+		clear: left;
+		cursor: pointer;
+		text-align: center;
+		border-radius: 0.25rem;
+		margin: 0 auto;
+		width: 80%;
+		background-color: #00A854;
+	}
   .input {
     display: inline-block;
     text-align: left;
@@ -346,4 +402,21 @@
     background-color: #FFFFFF;
     padding: 0.9375rem 0rem;
   }
+	.infoItem {
+		width: 1.25rem;
+		height: 1.25rem;
+		cursor: pointer;
+		margin-left: 0.1875rem;
+		border: 0.0625rem solid #EEF1F6;
+		display: inline-block;
+		text-align: center;
+		margin-top: 0.3125rem;
+	}
+	.color{
+		background-color: red;
+	}
+	.infoAdd-item{
+		position: relative;
+		bottom: 0.5rem;
+	}
 </style>
