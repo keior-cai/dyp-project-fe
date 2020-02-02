@@ -22,6 +22,7 @@ export const API = {
     AdminLoadWechatCustomer : baseUrl + '/management/customer/queryCustomer',
     AdminQuerySpace : baseUrl + '/management/space/querySpace',
     AdminAddSpace : baseUrl + '/management/space/addSpace',
+		AdminLoadSpace : baseUrl + '/management/space/loadSpace',
     AdminInsertUpdateSpace : baseUrl + '/management/space/insertUpdate',
     AdminDelSpace : baseUrl + '/management/space/delSpace',
     AdminQueryMovie : baseUrl + '/management/movie/queryMovie',
@@ -29,6 +30,9 @@ export const API = {
     AdminInsertUpdateMovie : baseUrl + '/management/movie/insertUpdate',
     AdminUpdateMovie : baseUrl + '/management/movie/updateMovie',
     AdminDelMovie : baseUrl + '/management/movie/delMovie',
+    AdminLoadMovie : baseUrl + '/management/movie/loadMovie',
+    AdminQueryPSpace : baseUrl + '/management/pspace/queryPSpace',
+    AdminInsertUpdatePSpace : baseUrl + '/management/pspace/insertUpdate',
   },
   CUSTOMER : {
     

@@ -44,7 +44,7 @@
             </el-select>
       </div>
   		<div class="table-header">
-        <el-button type="primary" plain @click="add()"><i class="el-icon-plus"></i>添加客场地</el-button>
+        <el-button type="primary" plain @click="add()"><i class="el-icon-plus"></i>添加场地</el-button>
         <el-button type="danger" @click="delAll()" plain><i class="el-icon-delete"></i>批删除场地</el-button>
       </div>
   	</div>
@@ -58,28 +58,23 @@
 			highlight-current-row="true"
 		  @selection-change="handleSelectionChange">
 		  <el-table-column
-		    type="selection"
-		    width="55">
+		    type="selection">
 		  </el-table-column>
 		  <el-table-column
-		    label="id"
-		    width="120">
+		    label="id">
 		    <template slot-scope="scope">{{ scope.row.id }}</template>
 		  </el-table-column>
 		  <el-table-column
 				prop="address"
-		    label="位置"
-		    width="120">
+		    label="位置">
 		  </el-table-column>
 			<el-table-column
 				prop="name"
-			  label="名字"
-			  width="120">
+			  label="名字">
 			</el-table-column>
 		  <el-table-column
 		    prop="total"
-		    label="容量(人数)"
-		    width="120">
+		    label="容量(人数)">
 		  </el-table-column>
       <el-table-column
         prop="status"
@@ -94,10 +89,6 @@
             </el-tag>
           </template>
       </el-table-column>
-		  <el-table-column
-        prop="num"
-		    label="剩余容量">
-      </el-table-column>
       <el-table-column
         label="创建时间"
         show-overflow-tooltip>
@@ -107,9 +98,12 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="updateTime"
         label="更新时间"
         show-overflow-tooltip>
+				<template slot-scope="scope">
+				  <i class="el-icon-time"></i>
+				  <span style="margin-left: 10px">{{scope.row.updateTime}}</span>
+				</template>
       </el-table-column>
       <el-table-column
         label="操作"
@@ -184,13 +178,6 @@
 				    show-word-limit
 				    :disabled="userInfo.update"/>
 				</el-form-item>
-        <el-form-item label="容量" >
-          <el-input
-            v-model="userInfo.total"
-						type="number"
-            autocomplete="off" 
-            placeholder="请输场地"/>
-        </el-form-item>
         <el-form-item label="状态">
             <el-switch v-model="tmpStatus"/>
         </el-form-item>
@@ -200,20 +187,26 @@
         <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
-		<el-dialog :title="`场地信息,场地位置:${size}`" :visible.sync="infoDialog" width="500px">
-			<div v-for="(item, index) in spaceList" :key="item" :index="index" style="text-align: center;">
-				<div v-for="i in item" :key="i" :class="{
+		<el-dialog :title="`场地信息,场地位置:${size}`" :visible.sync="infoDialog" width="800px">
+			<div class="line fe">屏幕</div>
+			<div v-for="(item, index) in spaceList" 
+				:key="item" 
+				:index="index" style="text-align: center;">
+				<div v-for="(i, iIndex) in item" :index="iIndex"
+					@click="itemClick(index, iIndex, $event)"
+					:key="i" 
+					:class="{
 					'infoItem': true,
 					'color': i
-				}"/>
-				<div class="infoItem infoAdd-item" @click="infoAdd(index)"><i class="el-icon-plus"/></div>
-				<div class="infoItem infoAdd-item" @click="infoDel(index)"><i class="el-icon-minus"/></div>
+					}"/>
+				<div class="infoItem infoAdd-item" @click="infoAdd(index)"><i class="el-icon-plus tag"/></div>
+				<div class="infoItem infoAdd-item" @click="infoDel(index)"><i class="el-icon-minus tag"/></div>
+				<span class="size">{{item.length}}位</span>
 			</div>
 			<div @click="infoAddLine" class="line">添加一排</div>
-		  </el-form>
 		  <div slot="footer" class="dialog-footer">
 		    <el-button @click="qxInfo">取 消</el-button>
-		    <el-button type="primary" @click="submit">确 定</el-button>
+		    <el-button type="primary" @click="infoSubmit">确 定</el-button>
 		  </div>
 		</el-dialog>
 	</div>
@@ -233,6 +226,7 @@
 				date: [],
         multipleSelection: [],
         page : 1,
+				id: 0,
         dialogFormVisible: false,
         showPassword: true,
 				infoDialog: false,
@@ -305,6 +299,14 @@
 				console.log(this.userInfo)
       },
 			info(row){
+				this.id = row.id
+				this.size = 0
+				if(row.info){
+					this.spaceList = JSON.parse(row.info)
+					this.spaceList.forEach(e => this.size += e.length)
+				}else {
+					this.spaceList = [[]]
+				}
 				this.infoDialog = true
 			},
 			qx() {
@@ -313,6 +315,10 @@
 			},
 			qxInfo(){
 				this.infoDialog = false
+			},
+			itemClick(l, r, elem){
+				this.spaceList[l][r] = 1
+				this.$forceUpdate()
 			},
 			submit() {
 				this.userInfo.status = this.tmpStatus ? 'ACTIVE' : 'NOT_ACTIVE'
@@ -347,8 +353,12 @@
 				this.size++
 			},
 			infoDel(item){
-				this.spaceList[item].pop()
-				this.size--
+				if(this.spaceList[item].length > 0){
+					this.spaceList[item].pop()
+					this.size--
+				}else {
+					this.spaceList.pop()
+				}
 			},
       del(data) {
         this.userInfo = data
@@ -357,6 +367,18 @@
 				})
 				this.loadData()
       },
+			infoSubmit(){
+				this.$POST(this.$API.ADMIN.AdminInsertUpdateSpace, {
+					id: this.id,
+					total: this.size,
+					info: JSON.stringify(this.spaceList)
+				})
+				.then(res => {
+					this.$message.success('修改成功')
+					this.loadData()
+					this.infoDialog = false
+				})
+			},
       play(data){
         
       }
@@ -371,6 +393,9 @@
   .el-select .el-input {
     width: 6.25rem;
   }
+	.tag{
+		line-height: 2.1875rem;
+	}
 	.line{
 		clear: left;
 		cursor: pointer;
@@ -378,7 +403,8 @@
 		border-radius: 0.25rem;
 		margin: 0 auto;
 		width: 80%;
-		background-color: #00A854;
+		background-color: #409EFF;
+		color: #FFFFFF;
 	}
   .input {
     display: inline-block;
@@ -403,11 +429,11 @@
     padding: 0.9375rem 0rem;
   }
 	.infoItem {
-		width: 1.25rem;
-		height: 1.25rem;
+		width: 2.1875rem;
+		height: 2.1875rem;
 		cursor: pointer;
 		margin-left: 0.1875rem;
-		border: 0.0625rem solid #EEF1F6;
+		border: 0.0625rem solid #999999;
 		display: inline-block;
 		text-align: center;
 		margin-top: 0.3125rem;
@@ -417,6 +443,21 @@
 	}
 	.infoAdd-item{
 		position: relative;
-		bottom: 0.5rem;
+		bottom: 0.875rem;
+	}
+	.size{
+		position: relative;
+		color: #F02D2D;
+		margin-left: 1.25rem;
+		bottom: 0.4375rem;
+	}
+	.fe{
+		background-color: #FFFFFF;
+		height: 5rem;
+		border: 0.0625rem solid #999999;
+		cursor: default;
+		color: #000000;
+		line-height: 5rem;
+		margin-bottom: 1.25rem;
 	}
 </style>

@@ -126,7 +126,7 @@ export default {
                                 //     title: '电影库存管理'
                                 // },
                                 {
-                                    index: 'markdown',
+                                    index: 'PSpace',
                                     title: '电影排场'
                                 }
                             ]

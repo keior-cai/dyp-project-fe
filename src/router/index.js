@@ -88,6 +88,12 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "markdown" */ '../components/page/Markdown.vue'),
                     meta: { title: 'markdown编辑器' }
                 },
+								{
+								    // markdown组件
+								    path: '/PSpace',
+								    component: () => import(/* webpackChunkName: "markdown" */ '../components/page/PSpace.vue'),
+								    meta: { title: '场地编排' }
+								},
                 {
                     // 图片上传组件
                     path: '/upload',
