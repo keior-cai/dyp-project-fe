@@ -8,7 +8,8 @@
 //     })
 // }
 
-var baseUrl = 'http://localhost:9901/admin'
+// var baseUrl = 'http://localhost:9901/admin'
+var baseUrl = 'http://192.168.31.127:9901/admin'
 
 export const API = {
   ADMIN : {
@@ -26,6 +27,7 @@ export const API = {
     AdminInsertUpdateSpace : baseUrl + '/management/space/insertUpdate',
     AdminDelSpace : baseUrl + '/management/space/delSpace',
     AdminQueryMovie : baseUrl + '/management/movie/queryMovie',
+    AdminQueryMovieById : baseUrl + '/management/movie/queryMovieById',
     AdminAddMovie : baseUrl + '/management/movie/addMovie',
     AdminInsertUpdateMovie : baseUrl + '/management/movie/insertUpdate',
     AdminUpdateMovie : baseUrl + '/management/movie/updateMovie',
@@ -33,6 +35,7 @@ export const API = {
     AdminLoadMovie : baseUrl + '/management/movie/loadMovie',
     AdminQueryPSpace : baseUrl + '/management/pspace/queryPSpace',
     AdminInsertUpdatePSpace : baseUrl + '/management/pspace/insertUpdate',
+    AdminInsertQeryOrder : baseUrl + '/management/order/queryOrder',
   },
   CUSTOMER : {
     

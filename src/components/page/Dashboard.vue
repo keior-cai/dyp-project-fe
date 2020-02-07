@@ -4,9 +4,9 @@
             <el-col :span="8">
                 <el-card shadow="hover" class="mgb20" style="height:252px;">
                     <div class="user-info">
-                        <img src="../../assets/img/img.jpg" class="user-avator" alt="">
+                        <img :src="userInfo.avatar" class="user-avator" alt="">
                         <div class="user-info-cont">
-                            <div class="user-info-name">111</div>
+                            <div class="user-info-name">{{userInfo.userName}}</div>
                             <div v-if="userInfo.role == 1">超级管理员</div>
                             <div v-if="userInfo.role == 0">普通管理员</div>
                         </div>
@@ -35,8 +35,8 @@
                             <div class="grid-content grid-con-1">
                                 <i class="el-icon-lx-people grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">1234</div>
-                                    <div>用户访问量</div>
+                                    <div class="grid-num">{{statics.count}}</div>
+                                    <div>下单量</div>
                                 </div>
                             </div>
                         </el-card>
@@ -46,8 +46,8 @@
                             <div class="grid-content grid-con-2">
                                 <i class="el-icon-lx-notice grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">321</div>
-                                    <div>系统消息</div>
+                                    <div class="grid-num">{{statics.fail}}</div>
+                                    <div>退单量</div>
                                 </div>
                             </div>
                         </el-card>
@@ -57,8 +57,8 @@
                             <div class="grid-content grid-con-3">
                                 <i class="el-icon-lx-goods grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">5000</div>
-                                    <div>数量</div>
+                                    <div class="grid-num">{{statics.total}}</div>
+                                    <div>总收入</div>
                                 </div>
                             </div>
                         </el-card>
@@ -112,8 +112,13 @@
         name: 'dashboard',
         data() {
             return {
+								statics: {
+									count: 0,
+									fail: 0,
+									total: 0
+								},
                 name : '',
-                userInfo: JSON.parse(sessionStorage.getItem('userInfo')),
+                userInfo: {},
                 todoList: [{
                         title: '今天要修复100个bug',
                         status: false,
@@ -196,6 +201,7 @@
         created(){
             this.handleListener()
             this.changeDate()
+						this.loadStaticsCount()
         },
         activated(){
             this.handleListener()
@@ -222,11 +228,22 @@
                     this.renderChart()
                 }, 300);
             },
+						loadStaticsCount(){
+						  this.$GET(this.$API.ADMIN.AdmingetCount)
+						  .then(res => {
+						    this.statics = res.data
+						  })
+						},
             renderChart(){
                 this.$refs.bar.renderChart()
                 this.$refs.line.renderChart()
             }
-        }
+        },
+				mounted() {
+					this.$GET(this.$API.ADMIN.AdminUseInfo, {}).then(res => {
+						this.userInfo = res.data
+					})
+				}
     }
 
 </script>

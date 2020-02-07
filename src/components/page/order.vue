@@ -2,21 +2,13 @@
   <div class="container">
 		<div class="header">
       <div class="input">
-        <el-select
-          v-model="spaceId" 
+        <el-input
+          v-model="orderSn" 
           clearable 
           :style="{'margin-left': '20px'}"
 					@change="loadData"
           placeholder="请选择">
-          <el-option
-						v-for="(item, index) in spaces"
-            :key="item.id"
-            :label="item.name"
-						:value="item.id"
-						>
-						{{item.name}}
-          </el-option>
-        </el-select>
+        </el-input>
         <el-date-picker
           v-model="date"
           type="date"
@@ -28,10 +20,8 @@
 			<div class="table-header">
         <el-button type="primary" 
 				plain 
-				@click="add()"
-				:disabled="addPSpace"
-				><i class="el-icon-plus"></i>添加排场</el-button>
-        <el-button type="danger" @click="delAll()" plain><i class="el-icon-delete"></i>批删除排场</el-button>
+				@click="loadData()"
+				><i class="el-icon-plus"></i>刷新</el-button>
       </div>
 		</div>
 		<el-table
@@ -44,22 +34,6 @@
 		  style="width: 100%; background-color: #FFFFFF;"
 			highlight-current-row="true"
 		  @selection-change="handleSelectionChange">
-			<el-table-column type="expand">
-			  <template slot-scope="props">
-			    <div class="line fe">屏幕</div>
-			    <div v-for="(item, index) in format(props.row.info)" 
-			      :key="item" 
-			      :index="index" style="text-align: center;">
-			      <div v-for="(i, iIndex) in item" :index="iIndex"
-			        :key="i" 
-			        :class="{
-			        'infoItem': true,
-			        'color': i
-			        }"/>
-			      <span class="size">{{item.length}}位</span>
-			    </div>
-			  </template>
-			</el-table-column>
 			<el-table-column
 			  type="selection"
 			  width="55">
@@ -69,48 +43,30 @@
 		    <template slot-scope="scope">{{ scope.row.id }}</template>
 		  </el-table-column>
 		  <el-table-column
-				prop="movieName"
-		    label="电影名称">
+				prop="orderSn"
+				width="150"
+		    label="订单号">
 		  </el-table-column>
 			<el-table-column
-				prop="name"
-			  label="场地名称">
+				prop="movieName"
+			  label="电影名称">
 			</el-table-column>
 			<el-table-column
-				prop="address"
-			  label="场地位置">
+				prop="num"
+			  label="数量">
 			</el-table-column>
 			<el-table-column
-			  label="场地容量">
-				<template slot-scope="scope">{{ scope.row.total }}位</template>
-			</el-table-column>
-			<el-table-column
-				width="100"
-			  label="场地剩余容量">
-				<template slot-scope="scope">{{ scope.row.num }}位</template>
-			</el-table-column>
-			<el-table-column
-			  label="影票单价">
+			  label="单价">
 				<template slot-scope="scope">{{ scope.row.price }}元</template>
 			</el-table-column>
 			<el-table-column
-				width="100"
-			  label="影票VIP单价">
-				<template slot-scope="scope">{{ scope.row.vipPrice }}元</template>
+				width="total"
+			  label="总价">
+				<template slot-scope="scope">{{ scope.row.num * scope.row.price }}元</template>
 			</el-table-column>
-		  <el-table-column
-		    prop="date"
-		    label="播放日期">
-		  </el-table-column>
 			<el-table-column
-		    prop="upTime"
-		    label="播放时间"
-		    width="120">
-		  </el-table-column>
-			<el-table-column
-			  prop="downTime"
-				width="100"
-			  label="结束播放时间">
+			  label="订单状态">
+				<template slot-scope="scope">{{ scope.row.status }}</template>
 			</el-table-column>
       <el-table-column
         label="创建时间"
@@ -121,40 +77,12 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="updateTime"
         label="更新时间"
         show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column
-        label="操作"
-        fixed="right"
-        highlight-current-row
-				width="180"
-        show-overflow-tooltip>
-          <template slot-scope="scope">
-            <el-tooltip 
-              class="item" 
-              effect="dark" 
-              content="编辑"  
-              placement="right">
-              <el-button 
-                type="primary" 
-                size="mini"
-                icon="el-icon-edit"
-                @click="edit(scope.row)"/>
-            </el-tooltip>
-            <el-tooltip 
-              class="item" 
-              effect="dark" 
-              content="删除"
-              placement="right">
-              <el-button 
-                type="danger" 
-                icon="el-icon-delete"
-                size="mini"
-                @click="del(scope.row)"/>
-            </el-tooltip>
-          </template>
+				<template slot-scope="scope">
+				  <i class="el-icon-time"></i>
+				  <span style="margin-left: 10px">{{scope.row.updateTime}}</span>
+				</template>
       </el-table-column>
 		</el-table>
 		<div class="block" style="text-align: right;">
@@ -231,25 +159,6 @@
 <script>
   export default {
     data() {
-       var validatePass = (rule, value, callback) => {
-          if (value === '') {
-            callback(new Error('请输入密码'));
-          } else {
-            if (this.userInfo.password !== '') {
-              this.$refs.ruleForm.validateField('password2')
-            }
-            callback()
-          }
-        }
-        var validatePass2 = (rule, value, callback) => {
-          if (value === '') {
-            callback(new Error('请再次输入密码'))
-          } else if (value !== this.ruleForm.password) {
-            callback(new Error('两次输入密码不一致!'))
-          } else {
-            callback()
-          }
-        }
       return {
         title: '',
 				addPSpace: true,
@@ -275,26 +184,15 @@
 				id: '',
 				time: '',
 				spaceId: '',
-				movieId: '',
+				orderSn: '',
 				movieInfo: {},
         date : '',
         ids : [],
 				infoDialog: false,
-        rules: {
-          pass: [
-            { validator: validatePass, trigger: 'blur' }
-          ],
-          checkPass: [
-            { validator: validatePass2, trigger: 'blur' }
-          ],
-        }
-      }
+			}
     },
     methods: {
       loadData(startTime = '', endTime = '') {
-				if(this.date && this.spaceId){
-					this.addPSpace = false
-				}
 				this.loading = true
 				let data = {}
 				if(this.date){
@@ -302,8 +200,8 @@
 				}
 				data.page = this.page
 				data.size = this.tablePageSize
-				data.sId = this.spaceId
-				this.$GET(this.$API.ADMIN.AdminQueryPSpace, data)
+				data.orderSn = this.orderSn
+				this.$GET(this.$API.ADMIN.AdminInsertQeryOrder, data)
 				.then(res => {
 				  this.tablePageTotal = res.data.total
 				  this.tableData = res.data.details
@@ -406,33 +304,9 @@
 					this.spaces = res.data
 				})
 			},
-      submit(){
-				let startTime = this.time[0].toTimeString().split(' ')[0]
-				let endTime = this.time[1].toTimeString().split(' ')[0]
-				let data = {}
-				if(this.userInfo.userUpdate){
-					data.id = this.id
-				}
-				data.mId = this.movieId
-				data.sId = this.spaceId
-				data.date = this.date.toLocaleDateString().replace('/','-').replace('/','-')
-				data.upTime = startTime
-				data.downTime = endTime
-				this.$POST(this.$API.ADMIN.AdminInsertUpdatePSpace,data)
-				.then(res => {
-					this.dialogFormVisible = false
-					if(this.userInfo.userUpdate){
-						this.$message.success('修改成功')
-					}else{
-						this.$message.success('添加成功')
-					}
-					this.loadData()
-				})
-      }
     },
     created(){
 			this.loadMovie()
-			this.loadSpace()
 			this.loadData()
       // this.loadData()
     }
@@ -440,9 +314,6 @@
 </script>
 
 <style scoped>
-  .el-select .el-input {
-    width: 6.25rem;
-  }
   .input {
     display: inline-block;
     text-align: left;

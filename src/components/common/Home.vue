@@ -39,6 +39,7 @@ export default {
             this.collapse = msg
         })
         const userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+				console.log(userInfo)
         if (userInfo.role == 1) {
           this.items = [
             {
@@ -71,7 +72,7 @@ export default {
             			},
             			{
             			    icon: 'el-icon-s-tools',
-            			    index: 'Setting',
+            			    index: 'Settings',
             			    title: '系统设置'
             			}
             		]
@@ -83,21 +84,6 @@ export default {
                     icon: 'el-icon-lx-home',
                     index: 'dashboard',
                     title: '控制台'
-                },
-                {
-                    icon: 'el-icon-lx-copy',
-                    index: 'tabs',
-                    title: '客户管理',
-										subs: [
-											{
-												index: 'vip',
-												title: 'VIP管理'
-											},
-											{
-												index: 'WechatCustomer',
-												title: '客户管理'
-											},
-										]
                 },
 								{
 								    icon: 'el-icon-lx-copy',
@@ -132,7 +118,7 @@ export default {
                             ]
                         },
                         {
-                            index: 'upload',
+                            index: 'YYInfo',
                             title: '影院信息'
                         }
                     ]
@@ -157,11 +143,11 @@ export default {
 										}
 									]
 								},
-                {
-                    icon: 'el-icon-lx-warn',
-                    index: '7',
-                    title: '权限管理'
-                }
+								{
+								    icon: 'el-icon-s-tools',
+								    index: 'Settings',
+								    title: '系统设置'
+								}
             ]
         }
         
