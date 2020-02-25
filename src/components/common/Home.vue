@@ -125,23 +125,8 @@ export default {
                 },
 								{
 									icon: 'el-icon-pie-chart',
-									index: 'statics',
+									index: 'charts',
 									title: '数据统计',
-									subs: [
-										{
-											index: 'userStatics',
-											title: '用户统计',
-										},
-										{
-											index: 'orderStatics',
-											title: '电影统计',
-										},
-										{
-										    icon: 'el-icon-pie-chart',
-										    index: 'charts',
-										    title: 'schart图表'
-										}
-									]
 								},
 								{
 								    icon: 'el-icon-s-tools',

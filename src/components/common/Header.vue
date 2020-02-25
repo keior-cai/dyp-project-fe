@@ -68,8 +68,8 @@ export default {
         // 用户名下拉菜单选择事件
         handleCommand(command) {
             if (command == 'loginout') {
-                sessionStorage.removeItem('userInfo');
-                this.$router.push('/login')
+                sessionStorage.removeItem('userInfo')
+								this.$router.push('/login')
             }
         },
         // 侧边栏折叠

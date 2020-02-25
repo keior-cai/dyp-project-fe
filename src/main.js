@@ -10,7 +10,7 @@ import 'element-ui/lib/theme-chalk/index.css' // 默认主题
 import './assets/css/icon.css'
 import './components/common/directives'
 import 'babel-polyfill'
-
+import Time from './utils/time.js'
 import upload from './utils/upload'
 
 // import { Get, Post } from './utils/request.js'
@@ -21,6 +21,7 @@ Vue.prototype.$POST = Post
 Vue.prototype.$API = API
 
 Vue.config.productionTip = false
+Vue.use(Time)
 Vue.use(VueI18n)
 Vue.use(upload)
 Vue.use(ElementUI, {

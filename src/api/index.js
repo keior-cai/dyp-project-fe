@@ -9,11 +9,14 @@
 // }
 
 // var baseUrl = 'http://localhost:9901/admin'
-var baseUrl = 'http://192.168.31.127:9901/admin'
+// var baseUrl = 'http://192.168.31.127:9901/admin'
+// var baseUrl = 'http://47.106.78.139/admin'
+var baseUrl = 'http://ccj.wezhuiyi.com/admin'
 
 export const API = {
   ADMIN : {
     AdminLogin : baseUrl + '/login/login',
+    Logout : baseUrl + '/login/logout',
     AdminUseInfo : baseUrl + '/management/admin/getAdminInfo',
     AdminLoadCustomer : baseUrl + '/management/admin/queryAdmin',
     AdminLoadStaticsData : baseUrl + '/management/admin/getStatics',
@@ -36,6 +39,8 @@ export const API = {
     AdminQueryPSpace : baseUrl + '/management/pspace/queryPSpace',
     AdminInsertUpdatePSpace : baseUrl + '/management/pspace/insertUpdate',
     AdminInsertQeryOrder : baseUrl + '/management/order/queryOrder',
+    LOGURL : baseUrl + '/management/admin/queryLog',
+    OrderStatics : baseUrl + '/management/admin/getCharts',
   },
   CUSTOMER : {
     
