@@ -8,7 +8,8 @@
 //     })
 // }
 
-var baseUrl = 'http://localhost:9901/admin'
+// var baseUrl = 'http://localhost:9901/admin'
+var baseUrl = 'http://call.wezhuiyi.com:9901/admin'
 
 export const API = {
   ADMIN : {

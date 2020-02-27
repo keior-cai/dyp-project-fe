@@ -2,6 +2,8 @@ import Axios from 'axios'
 
 import { Message } from 'element-ui'
 
+Axios.defaults.withCredentials=true
+
 export const Get = (url, data = {}) => {
   return new Promise((resolve, reject) => {
     Axios.get(url, {
