@@ -7,7 +7,7 @@ export default new Router({
     routes: [
         {
             path: '/',
-            redirect: '/dashboard'
+            redirect: '/login'
         },
 				{
 					path: '/console',
@@ -34,6 +34,11 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Setting.vue'),
                     meta: { title: '系统首页' }
                 },
+								{
+                    path: '/Settings',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Settings.vue'),
+                    meta: { title: '系统设置' }
+                },
                 {
                     path: '/icon',
                     component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
@@ -58,6 +63,11 @@ export default new Router({
                     path: '/WechatCustomer',
                     component: () => import(/* webpackChunkName: "tabs" */ '../components/page/WechatCustomer.vue'),
                     meta: { title: '用户管理' }
+                },
+                {
+                    path: '/order',
+                    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/order.vue'),
+                    meta: { title: '订单管理' }
                 },
                 {
                     path: '/form',
@@ -101,10 +111,16 @@ export default new Router({
                     meta: { title: '文件上传' }
                 },
                 {
+                    // 图片上传组件
+                    path: '/YYInfo',
+                    component: () => import(/* webpackChunkName: "upload" */ '../components/page/YYInfo.vue'),
+                    meta: { title: '影院信息' }
+                },
+                {
                     // vue-schart组件
                     path: '/charts',
                     component: () => import(/* webpackChunkName: "chart" */ '../components/page/BaseCharts.vue'),
-                    meta: { title: 'schart图表' }
+                    meta: { title: '电影统计' }
                 },
                 {
                     // 拖拽列表组件

@@ -10,10 +10,15 @@
 
 // var baseUrl = 'http://localhost:9901/admin'
 var baseUrl = 'http://call.wezhuiyi.com:9901/admin'
+// var baseUrl = 'http://192.168.31.127:9901/admin'
+// var baseUrl = 'http://47.106.78.139/admin'
+// var baseUrl = 'http://ccj.wezhuiyi.com/admin'
+
 
 export const API = {
   ADMIN : {
     AdminLogin : baseUrl + '/login/login',
+    Logout : baseUrl + '/login/logout',
     AdminUseInfo : baseUrl + '/management/admin/getAdminInfo',
     AdminLoadCustomer : baseUrl + '/management/admin/queryAdmin',
     AdminLoadStaticsData : baseUrl + '/management/admin/getStatics',
@@ -27,6 +32,7 @@ export const API = {
     AdminInsertUpdateSpace : baseUrl + '/management/space/insertUpdate',
     AdminDelSpace : baseUrl + '/management/space/delSpace',
     AdminQueryMovie : baseUrl + '/management/movie/queryMovie',
+    AdminQueryMovieById : baseUrl + '/management/movie/queryMovieById',
     AdminAddMovie : baseUrl + '/management/movie/addMovie',
     AdminInsertUpdateMovie : baseUrl + '/management/movie/insertUpdate',
     AdminUpdateMovie : baseUrl + '/management/movie/updateMovie',
@@ -34,6 +40,9 @@ export const API = {
     AdminLoadMovie : baseUrl + '/management/movie/loadMovie',
     AdminQueryPSpace : baseUrl + '/management/pspace/queryPSpace',
     AdminInsertUpdatePSpace : baseUrl + '/management/pspace/insertUpdate',
+    AdminInsertQeryOrder : baseUrl + '/management/order/queryOrder',
+    LOGURL : baseUrl + '/management/admin/queryLog',
+    OrderStatics : baseUrl + '/management/admin/getCharts',
   },
   CUSTOMER : {
     

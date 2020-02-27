@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
   	<div class="header">
       <div class="input">
         <el-input
@@ -193,7 +193,6 @@
 				:key="item" 
 				:index="index" style="text-align: center;">
 				<div v-for="(i, iIndex) in item" :index="iIndex"
-					@click="itemClick(index, iIndex, $event)"
 					:key="i" 
 					:class="{
 					'infoItem': true,
