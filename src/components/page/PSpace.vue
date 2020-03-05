@@ -10,7 +10,7 @@
           placeholder="请选择">
           <el-option
 						v-for="(item, index) in spaces"
-            :key="item.id"
+            :key="index"
             :label="item.name"
 						:value="item.id"
 						>
@@ -42,16 +42,16 @@
       border
 			fit
 		  style="width: 100%; background-color: #FFFFFF;"
-			highlight-current-row="true"
+			highlight-current-row
 		  @selection-change="handleSelectionChange">
 			<el-table-column type="expand">
 			  <template slot-scope="props">
 			    <div class="line fe">屏幕</div>
 			    <div v-for="(item, index) in format(props.row.info)" 
-			      :key="item" 
+			      :key="index" 
 			      :index="index" style="text-align: center;">
 			      <div v-for="(i, iIndex) in item" :index="iIndex"
-			        :key="i" 
+			        :key="iIndex" 
 			        :class="{
 			        'infoItem': true,
 			        'color': i
@@ -64,10 +64,6 @@
 			  type="selection"
 			  width="55">
 			</el-table-column>
-		  <el-table-column
-		    label="id">
-		    <template slot-scope="scope">{{ scope.row.id }}</template>
-		  </el-table-column>
 		  <el-table-column
 				prop="movieName"
 		    label="电影名称">
@@ -102,6 +98,13 @@
 		    prop="date"
 		    label="播放日期">
 		  </el-table-column>
+      <el-table-column
+        label="排查状态">
+        <template slot-scope="scope">
+          <div v-if="scope.row.movieStatus == 2"> 已过期</div>
+          <div v-else>进行中</div>
+        </template>
+      </el-table-column>
 			<el-table-column
 		    prop="upTime"
 		    label="播放时间"
@@ -133,6 +136,7 @@
         show-overflow-tooltip>
           <template slot-scope="scope">
             <el-tooltip 
+              v-if="scope.row.movieStatus != 2"
               class="item" 
               effect="dark" 
               content="编辑"  
@@ -144,11 +148,12 @@
                 @click="edit(scope.row)"/>
             </el-tooltip>
             <el-tooltip 
+              v-if="scope.row.movieStatus != 2"
               class="item" 
               effect="dark" 
               content="删除"
               placement="right">
-              <el-button 
+              <el-button
                 type="danger" 
                 icon="el-icon-delete"
                 size="mini"

@@ -22,8 +22,7 @@
             :value-format="'yyyy-MM-dd'"
             @change="loadData()"
             @blur="loadData()"
-            @clear="loadData()"
-            :picker-options="pickerOptions">
+            @clear="loadData()">
           </el-date-picker>
           <el-select 
             v-model="status" 
@@ -55,26 +54,32 @@
 		  tooltip-effect="dark"
       border
 		  style="width: 100%; background-color: #FFFFFF;"
-			highlight-current-row="true"
+			highlight-current-row
 		  @selection-change="handleSelectionChange">
 		  <el-table-column
 		    type="selection">
-		  </el-table-column>
-		  <el-table-column
-		    label="id">
-		    <template slot-scope="scope">{{ scope.row.id }}</template>
-		  </el-table-column>
-		  <el-table-column
-				prop="address"
-		    label="位置">
 		  </el-table-column>
 			<el-table-column
 				prop="name"
 			  label="名字">
 			</el-table-column>
+      <el-table-column
+        label="位置">
+        <template slot-scope="scope">
+          <i class="el-icon-location"></i>
+          <span style="margin-left: 10px">{{scope.row.address}}</span>
+        </template>
+      </el-table-column>
 		  <el-table-column
-		    prop="total"
 		    label="容量(人数)">
+        <template slot-scope="scope">
+          <el-tag
+            type="success"
+            effect="plain"
+            disable-transitions>
+            <span>{{scope.row.total}}人</span>
+          </el-tag>
+        </template>
 		  </el-table-column>
       <el-table-column
         prop="status"
@@ -160,7 +165,7 @@
 		  </el-pagination>
 		</div>
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="500px">
-      <el-form :model="userInfo" status-icon :rules="rules" ref="ruleForm" label-width="100px">
+      <el-form :model="userInfo" status-icon ref="ruleForm" label-width="100px">
         <el-form-item label="位置" >
           <el-input 
             v-model="userInfo.address" 
@@ -190,10 +195,10 @@
 		<el-dialog :title="`场地信息,场地位置:${size}`" :visible.sync="infoDialog" width="800px">
 			<div class="line fe">屏幕</div>
 			<div v-for="(item, index) in spaceList" 
-				:key="item" 
+				:key="index" 
 				:index="index" style="text-align: center;">
 				<div v-for="(i, iIndex) in item" :index="iIndex"
-					:key="i" 
+					:key="iIndex" 
 					:class="{
 					'infoItem': true,
 					'color': i
@@ -218,6 +223,7 @@
         title: '',
         tableData: [],
 				tablePageSize: 10,
+        currentPage: 1,
 				tablePageTotal: 0,
 				input: '',
 				loading: false,
@@ -239,6 +245,7 @@
         },
 				tmpStatus: 0,
 				size: 0,
+        status: ''
       }
     },
 

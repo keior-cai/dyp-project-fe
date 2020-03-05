@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="container">
-					<el-form :model="userInfo" status-icon :rules="rules" ref="ruleForm" label-width="100px">
+					<el-form :model="userInfo" status-icon ref="ruleForm" label-width="100px">
 					  <el-form-item label="影院名称">
 					    <el-input 
 					      v-model="userInfo.info.name" 
@@ -64,7 +64,7 @@
 <script>
     import VueCropper  from 'vue-cropperjs';
     export default {
-        name: 'upload',
+        name: 'YYInfo',
         data: function(){
             return {
                 defaultSrc: require('../../assets/img/img.jpg'),

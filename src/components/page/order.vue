@@ -1,28 +1,30 @@
 <template>
   <div class="container">
 		<div class="header">
-      <div class="input">
-        <el-input
-          v-model="orderSn" 
-          clearable 
-          :style="{'margin-left': '20px'}"
-					@change="loadData"
-          placeholder="请选择">
-        </el-input>
-        <el-date-picker
-          v-model="date"
-          type="date"
-					format="yyyy-MM-dd"
-					@change="loadData()"
-          placeholder="选择日期">
-        </el-date-picker>
-      </div>
-			<div class="table-header">
-        <el-button type="primary" 
-				plain 
-				@click="loadData()"
-				><i class="el-icon-plus"></i>刷新</el-button>
-      </div>
+		  <div class="input">
+		    <el-input
+		      placeholder="请输入关键字"
+		      prefix-icon="el-icon-search"
+		      :style="{'width':'200px'}"
+		      v-model="input"
+		      @clear="loadData()"
+		      @blur="loadData()"
+		      clearable>
+		    </el-input>
+		    <el-date-picker
+		      v-model="date"
+		      type="daterange"
+		      align="right"
+		      unlink-panels
+		      range-separator="-"
+		      start-placeholder="开始日期"
+		      end-placeholder="结束日期"
+		      :value-format="'yyyy-MM-dd'"
+		      @change="loadData()"
+		      @blur="loadData()"
+		      @clear="loadData()">
+		    </el-date-picker>
+		  </div>
 		</div>
 		<el-table
 		  ref="multipleTable"
@@ -32,7 +34,7 @@
       border
 			fit
 		  style="width: 100%; background-color: #FFFFFF;"
-			highlight-current-row="true"
+			highlight-current-row
 		  @selection-change="handleSelectionChange">
 			<el-table-column
 			  type="selection"
@@ -97,7 +99,7 @@
 		  </el-pagination>
 		</div>
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="520px">
-      <el-form :model="userInfo" status-icon :rules="rules" ref="ruleForm" label-width="100px">
+      <el-form :model="userInfo" status-icon ref="ruleForm" label-width="100px">
 				<el-form-item label="电影名称">
 					<el-select
 						v-model="movieId" 
@@ -106,7 +108,7 @@
 						placeholder="请选择">
 						<el-option
 							v-for="(item, index) in movies"
-							:key="item.id"
+							:key="index"
 							:label="item.name"
 							:value="item.id"
 							>
@@ -189,6 +191,8 @@
         date : '',
         ids : [],
 				infoDialog: false,
+        movieId: '',
+        submit: ''
 			}
     },
     methods: {
@@ -328,6 +332,7 @@
   .header {
     background-color: #FFFFFF;
     padding: 0.9375rem 0.625rem;
+    margin-bottom: 2.5rem;
   }
   .table-header {
     text-align: right;

@@ -55,7 +55,7 @@
 		  tooltip-effect="dark"
       border
 		  style="width: 100%; background-color: #FFFFFF;"
-			highlight-current-row="true"
+			highlight-current-row
 		  @selection-change="handleSelectionChange">
 		  <el-table-column
 		    type="selection"

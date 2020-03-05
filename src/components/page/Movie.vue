@@ -1,11 +1,11 @@
 <template>
-    <div>
+    <div class="container">
 			<div class="header">
 			  <div class="input">
 			    <el-input
 			      placeholder="请输入关键字"
 			      prefix-icon="el-icon-search"
-			      :style="{'width':'200px'}"
+			      :style="{'width':'200px', 'margin-right': '20px'}"
 			      v-model="input"
 			      @clear="loadData()"
 			      @blur="loadData()"
@@ -22,8 +22,7 @@
 			        :value-format="'yyyy-MM-dd'"
 			        @change="loadData()"
 			        @blur="loadData()"
-			        @clear="loadData()"
-			        :picker-options="pickerOptions">
+			        @clear="loadData()">
 			      </el-date-picker>
 			      <el-select 
 			        v-model="status" 
@@ -33,13 +32,15 @@
 			        placeholder="请选择">
 			          <el-option
 			            :key="'ACTIVE'"
-			            :label="'发布'"
-			            :value="'ACTIVE'">
+			            label="发布"
+			            value="1">
+                  发布
 			          </el-option>
 			          <el-option
 			            :key="'NOT_ACTIVE'"
-			            :label="'下线'"
-			            :value="'NOT_ACTIVE'">
+			            label="下线"
+			            value="2">
+                  下线
 			          </el-option>
 			        </el-select>
 			  </div>
@@ -54,19 +55,16 @@
 				v-loading="loading"
     	  tooltip-effect="dark"
     	  style="width: 100%"
-    		highlight-current-row="true"
+    		highlight-current-row
     	  @selection-change="handleSelectionChange">
     	  <el-table-column
     	    type="selection">
     	  </el-table-column>
-   	  <el-table-column
-    	    label="ID"
-					prop="id">
-    	  </el-table-column>
     	  <el-table-column
     	    label="电影名称"
+          show-overflow-tooltip
 					prop="name">
-    	    <template slot-scope="scope">{{ scope.row.name }}</template>
+    	    <template slot-scope="scope"><span style="color: #303133; font-size: 0.875rem;">{{ scope.row.name }}</span></template>
     	  </el-table-column>
 				<el-table-column
 				  label="图片">
@@ -74,15 +72,28 @@
 				</el-table-column>
     	  <el-table-column
     	    prop="title"
+          show-overflow-tooltip
     	    label="标题">
     	  </el-table-column>
 				<el-table-column
-    	    prop="price"
     	    label="单价">
+          <template slot-scope="scope">
+            <el-tag
+              type="success"
+              disable-transitions>
+              <span>{{scope.row.price | price(scope.row.price)}} 元</span>
+            </el-tag>
+          </template>
     	  </el-table-column>
 				<el-table-column
-				  prop="vipPrice"
 				  label="VIP价格">
+          <template slot-scope="scope">
+            <el-tag
+              type="warning"
+              disable-transitions>
+              <span>{{scope.row.vipPrice | price(scope.row.vipPrice)}} 元</span>
+            </el-tag>
+          </template>
 				</el-table-column>
     	  <el-table-column
     	    prop="content"
@@ -95,9 +106,17 @@
     	    show-overflow-tooltip>
     	  </el-table-column>
     	  <el-table-column
-    	    prop="status"
     	    label="状态"
     	    show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-tag
+              :type="scope.row.status == 1  ? 'success' : 'danger'"
+              disable-transitions>
+              <span v-if="scope.row.status == 1">在线</span>
+              <span v-if="scope.row.status == 2">下线</span>
+              <span v-if="scope.row.status == 3">预售</span>
+            </el-tag>
+          </template>
     	  </el-table-column>
     	  <el-table-column
     	    prop="director"
@@ -110,24 +129,36 @@
     	    show-overflow-tooltip>
     	  </el-table-column>
         <el-table-column
-          prop="upTime"
           label="上映时间"
           show-overflow-tooltip>
+          <template slot-scope="scope">
+            <i class="el-icon-time"></i>
+            <span style="margin-left: 10px">{{scope.row.upTime}}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="downTime"
           label="下线时间"
           show-overflow-tooltip>
+          <template slot-scope="scope">
+            <i class="el-icon-time"></i>
+            <span style="margin-left: 10px">{{scope.row.downTime}}</span>
+          </template>
         </el-table-column>
     	  <el-table-column
-    	    prop="createTime"
     	    label="创建时间"
     	    show-overflow-tooltip>
+          <template slot-scope="scope">
+            <i class="el-icon-time"></i>
+            <span style="margin-left: 10px">{{scope.row.createTime}}</span>
+          </template>
     	  </el-table-column>
     	  <el-table-column
-    	    prop="updateTime"
     	    label="更新时间"
     	    show-overflow-tooltip>
+          <template slot-scope="scope">
+            <i class="el-icon-time"></i>
+            <span style="margin-left: 10px">{{scope.row.updateTime}}</span>
+          </template>
     	  </el-table-column>
 				<el-table-column
 				  label="操作"
@@ -137,6 +168,7 @@
 				  show-overflow-tooltip>
 				    <template slot-scope="scope">
 				      <el-tooltip 
+                v-if="scope.row.status != 2"
 				        class="item" 
 				        effect="dark" 
 				        content="编辑"  
@@ -148,7 +180,8 @@
 				          @click="edit(scope.row)"/>
 				      </el-tooltip>
 				      
-				      <el-tooltip 
+				      <el-tooltip
+                v-if="scope.row.status != 2"
 				        class="item" 
 				        effect="dark" 
 				        content="删除"
@@ -174,7 +207,7 @@
     	    </el-pagination>
     	 </div>
 			<el-dialog :title="title" :visible.sync="dialogFormVisible" width="500px">
-			  <el-form :model="userInfo" status-icon :rules="rules" ref="ruleForm" label-width="100px">
+			  <el-form :model="userInfo" status-icon ref="ruleForm" label-width="100px">
 			    <el-form-item label="电影名称">
 			      <el-input 
 			        v-model="userInfo.name" 
@@ -297,6 +330,8 @@
 	      multipleSelection: [],
 				imageUrl: '',
 				uploadUrl: '',
+        status: '',
+        title: ''
 	    }
 	  },
 	
@@ -331,6 +366,8 @@
 				this.$GET(this.$API.ADMIN.AdminQueryMovie, {
 					size : this.tablePageTotal,
 					page : this.tablePageSize,
+          status: this.status,
+          name: this.input,
 					startTime: startTime,
 					endTime: endTime
 				})

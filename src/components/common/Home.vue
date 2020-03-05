@@ -39,7 +39,6 @@ export default {
             this.collapse = msg
         })
         const userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
-				console.log(userInfo)
         if (userInfo.role == 1) {
           this.items = [
             {
