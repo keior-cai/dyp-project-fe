@@ -20,6 +20,7 @@ export const API = {
     AdminLogin : baseUrl + '/login/login',
     Logout : baseUrl + '/login/logout',
     AdminUseInfo : baseUrl + '/management/admin/getAdminInfo',
+    AdminCreateToken : baseUrl + '/management/admin/createToken',
     AdminLoadCustomer : baseUrl + '/management/admin/queryAdmin',
     AdminLoadStaticsData : baseUrl + '/management/admin/getStatics',
     AdmingetCount : baseUrl + '/management/admin/getCount',

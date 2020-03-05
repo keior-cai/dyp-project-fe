@@ -59,12 +59,12 @@
 			</el-table-column>
 			<el-table-column
 			  label="单价">
-				<template slot-scope="scope">{{ scope.row.price }}元</template>
+				<template slot-scope="scope">{{ scope.row.price | price(scope.row.price) }}元</template>
 			</el-table-column>
 			<el-table-column
 				width="total"
 			  label="总价">
-				<template slot-scope="scope">{{ scope.row.num * scope.row.price }}元</template>
+				<template slot-scope="scope">{{ scope.row.num * scope.row.price | price(scope.row.num * scope.row.price) }}元</template>
 			</el-table-column>
 			<el-table-column
 			  label="订单状态">

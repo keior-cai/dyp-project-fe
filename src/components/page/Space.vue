@@ -61,9 +61,11 @@
 		  </el-table-column>
 			<el-table-column
 				prop="name"
+        show-overflow-tooltip
 			  label="名字">
 			</el-table-column>
       <el-table-column
+        show-overflow-tooltip
         label="位置">
         <template slot-scope="scope">
           <i class="el-icon-location"></i>

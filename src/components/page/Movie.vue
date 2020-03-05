@@ -101,11 +101,6 @@
     	    show-overflow-tooltip>
     	  </el-table-column>
     	  <el-table-column
-    	    prop="labels"
-    	    label="标签"
-    	    show-overflow-tooltip>
-    	  </el-table-column>
-    	  <el-table-column
     	    label="状态"
     	    show-overflow-tooltip>
           <template slot-scope="scope">
@@ -244,20 +239,6 @@
 						autocomplete="off"
 						placeholder="请输入电影详情"/>
 					</el-form-item>
-					<el-form-item label="标签">
-						<div>
-						  <el-checkbox-group v-model="userInfo.labels" size="small">
-						    <el-checkbox label="{color='read', value='2D', icon='icon'}" border>2 D</el-checkbox>
-						    <el-checkbox label="3 D" border></el-checkbox>
-						    <el-checkbox label="VIP" border></el-checkbox>
-						    <el-checkbox label="零食" border></el-checkbox>
-						    <el-checkbox label="标签一" border></el-checkbox>
-						    <el-checkbox label="标签一" border></el-checkbox>
-						    <el-checkbox label="标签一" border></el-checkbox>
-						    <el-checkbox label="标签一" border></el-checkbox>
-						  </el-checkbox-group>
-						</div>
-					</el-form-item>
 					<el-form-item label="导演">
 					  <el-input
 					    v-model="userInfo.director"
@@ -381,7 +362,6 @@
 			},
 			submit(){
 				let data = this.userInfo
-				data.labels = JSON.stringify(data.labels)
 				this.$POST(this.$API.ADMIN.AdminInsertUpdateMovie, data)
 				.then(res => {
 					if(this.userInfo.userUpdate){

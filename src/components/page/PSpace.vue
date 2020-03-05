@@ -66,54 +66,110 @@
 			</el-table-column>
 		  <el-table-column
 				prop="movieName"
+        show-overflow-tooltip
 		    label="电影名称">
 		  </el-table-column>
 			<el-table-column
 				prop="name"
+        show-overflow-tooltip
 			  label="场地名称">
 			</el-table-column>
 			<el-table-column
-				prop="address"
 			  label="场地位置">
+        <template slot-scope="scope">
+          <i class="el-icon-location"></i>
+          <span style="margin-left: 10px">{{scope.row.address}}</span>
+        </template>
 			</el-table-column>
 			<el-table-column
 			  label="场地容量">
-				<template slot-scope="scope">{{ scope.row.total }}位</template>
+        <template slot-scope="scope">
+          <el-tag
+            type="success"
+            effect="plain"
+            disable-transitions>
+            <span>{{scope.row.total}}位</span>
+          </el-tag>
+        </template>
 			</el-table-column>
 			<el-table-column
 				width="100"
 			  label="场地剩余容量">
-				<template slot-scope="scope">{{ scope.row.num }}位</template>
+        <template slot-scope="scope">
+          <el-tag
+            type="success"
+            effect="plain"
+            disable-transitions>
+            <span>{{scope.row.num}}位</span>
+          </el-tag>
+        </template>
 			</el-table-column>
 			<el-table-column
 			  label="影票单价">
-				<template slot-scope="scope">{{ scope.row.price }}元</template>
+        <template slot-scope="scope">
+          <el-tag
+            type="danger"
+            disable-transitions>
+            <span>{{scope.row.price | price(scope.row.price)}} 元</span>
+          </el-tag>
+        </template>
 			</el-table-column>
 			<el-table-column
 				width="100"
 			  label="影票VIP单价">
-				<template slot-scope="scope">{{ scope.row.vipPrice }}元</template>
+        <template slot-scope="scope">
+          <el-tag
+            type="warning"
+            disable-transitions>
+            <span>{{scope.row.vipPrice | price(scope.row.vipPrice)}} 元</span>
+          </el-tag>
+        </template>
 			</el-table-column>
 		  <el-table-column
-		    prop="date"
+        width="105"
 		    label="播放日期">
+        <template slot-scope="scope">
+          <el-tag
+            type="info"
+            disable-transitions>
+            <span><i class="el-icon-time"></i>&nbsp;{{scope.row.date | formatTime(scope.row.date, 'YYYY-MM-DD')}}</span>
+          </el-tag>
+        </template>
 		  </el-table-column>
       <el-table-column
         label="排查状态">
         <template slot-scope="scope">
-          <div v-if="scope.row.movieStatus == 2"> 已过期</div>
-          <div v-else>进行中</div>
+          <el-tag
+            :type="scope.row.movieStatus == 2 ? 'danger' : 'success'"
+            disable-transitions>
+            <span v-if="scope.row.movieStatus == 2">已过期</span>
+            <span v-else>进行中</span>
+          </el-tag>
         </template>
       </el-table-column>
 			<el-table-column
-		    prop="upTime"
 		    label="播放时间"
 		    width="120">
+        <template slot-scope="scope">
+          <el-tag
+            type="info"
+            effect="plain"
+            disable-transitions>
+            <span><i class="el-icon-time"></i>{{scope.row.upTime}}</span>
+          </el-tag>
+        </template>
 		  </el-table-column>
 			<el-table-column
-			  prop="downTime"
 				width="100"
 			  label="结束播放时间">
+        <template slot-scope="scope">
+          <el-tag
+            type="warning"
+            effect="plain"
+            disable-transitions>
+            <span><i class="el-icon-time"></i>{{scope.row.downTime}}</span>
+          </el-tag>
+        </template>
 			</el-table-column>
       <el-table-column
         label="创建时间"
@@ -183,7 +239,7 @@
 						placeholder="请选择">
 						<el-option
 							v-for="(item, index) in movies"
-							:key="item.id"
+							:key="index"
 							:label="item.name"
 							:value="item.id"
 							>
@@ -395,9 +451,6 @@
         })
         this.$message.success('批量删除成功')
         this.loadData()
-      },
-      play(data){
-        
       },
 			loadMovie(){
 				this.$GET(this.$API.ADMIN.AdminLoadMovie,{})

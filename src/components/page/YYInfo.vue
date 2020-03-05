@@ -24,36 +24,59 @@
 					  </el-form-item>
 						<el-form-item label="营业状态">
 							<el-select
-							  v-model="userInfo.tmpStatus" 
-							  clearable
+							  v-model="userInfo.status"
 							  placeholder="请选择">
 							    <el-option
-							      :key="'ACTIVE'"
-							      :label="'营业'"
+							      key="ACTIVE"
+							      label="营业"
 							      :value="'ACTIVE'">
+                    营业
 							    </el-option>
 							    <el-option
-							      :key="'NOT_ACTIVE'"
-							      :label="'休息'"
+							      key="NOT_ACTIVE"
+							      label="休息"
 							      :value="'NOT_ACTIVE'">
+                    休息
 							    </el-option>
 							  </el-select>
 						</el-form-item>
-						<el-form-item label="标签">
-							<div>
-							  <el-checkbox-group v-model="userInfo.labels" size="small">
-							    <el-checkbox label="{color='read', value='2D', icon='icon'}" border>2 D</el-checkbox>
-							    <el-checkbox label="3 D" border></el-checkbox>
-							    <el-checkbox label="VIP" border></el-checkbox>
-							    <el-checkbox label="零食" border></el-checkbox>
-							    <el-checkbox label="标签一" border></el-checkbox>
-							    <el-checkbox label="标签一" border></el-checkbox>
-							    <el-checkbox label="标签一" border></el-checkbox>
-							    <el-checkbox label="标签一" border></el-checkbox>
-							  </el-checkbox-group>
-							</div>
+						<el-form-item label="是否开启回调">
+              <el-switch
+                style="display: block"
+                v-model="userInfo.isOpen"
+                active-value="0"
+                inactive-value="1"
+                active-color="#13ce66">
+              </el-switch>
 						</el-form-item>
+            <el-form-item label="回调地址">
+              <el-input
+                :disabled="userInfo.isOpen == 1"
+                v-model="userInfo.openUrl"
+                placeholder="请输回调地址"/>
+						</el-form-item>
+            <el-form-item label="启用openapi">
+              <el-switch
+                style="display: block"
+                v-model="openapi"
+                active-value="0"
+                inactive-value="1"
+                :change="change"
+                active-color="#13ce66">
+              </el-switch>
+            </el-form-item>
 					</el-form>
+          <el-form-item label="回调token">
+              <el-input
+                disabled
+                style="display: block"
+                v-model="userInfo.token"
+                active-value="0"
+                inactive-value="1"
+                active-color="#13ce66">
+              </el-input>
+            </el-form-item>
+          </el-form>
 					<div slot="footer" class="dialog-footer">
 					  <el-button type="primary" @click="submit">确 定</el-button>
 					</div>
@@ -72,7 +95,8 @@
                 imgSrc: '',
                 cropImg: '',
                 dialogVisible: false,
-								userInfo: {}
+								userInfo: {},
+                openapi: false
             }
         },
         components: {
@@ -96,8 +120,8 @@
                 this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
             },
             cancelCrop(){
-                this.dialogVisible = false;
-                this.cropImg = this.defaultSrc;
+                this.dialogVisible = false
+                this.cropImg = this.defaultSrc
             },
             imageuploaded(res) {
                 console.log(res)
@@ -110,19 +134,27 @@
             },
 						loadData () {
 							this.$GET(this.$API.ADMIN.AdminUseInfo, {}).then(res => {
-								this.userInfo = res.data
-								this.userInfo.tmpStatus = this.userInfo.status == 'ACTIVE' ? '营业' : '休息' 
+								this.userInfo = res.data 
 								this.userInfo.info = JSON.parse(this.userInfo.info)
+                if(this.userInfo.token){
+                  this.openapi = true
+                }
 							})
 						},
 						submit () {
 							let data = JSON.parse(JSON.stringify(this.userInfo))
 							data.info = JSON.stringify(data.info)
-							data.status = data.tmpStatus == '营业' ? 'ACTIVE' : 'NOT_ACTIVE'
 							this.$POST(this.$API.ADMIN.AdminInsertUpdate, data).then(res => {
 								this.$message.success('修改成功')
 							})
-						}
+						},
+            change(flag){
+              if(flag){
+                this.$GET(this.$API.ADMIN.AdminCreateToken, {}).then(res=> {
+                  this.userInfo.token = res.data
+                })
+              }
+            }
         },
         mounted(){
 						this.loadData()
@@ -131,6 +163,9 @@
 </script>
 
 <style scoped>
+    .el-input {
+      width: 18.75rem;
+    }
     .content-title{
         font-weight: 400;
         line-height: 50px;
