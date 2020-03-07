@@ -44,14 +44,14 @@
               <el-switch
                 style="display: block"
                 v-model="userInfo.isOpen"
-                active-value="0"
-                inactive-value="1"
+                :active-value='1'
+                :inactive-value='0'
                 active-color="#13ce66">
               </el-switch>
 						</el-form-item>
             <el-form-item label="回调地址">
               <el-input
-                :disabled="userInfo.isOpen == 1"
+                :disabled="userInfo.isOpen == 0"
                 v-model="userInfo.openUrl"
                 placeholder="请输回调地址"/>
 						</el-form-item>
@@ -59,33 +59,27 @@
               <el-switch
                 style="display: block"
                 v-model="openapi"
-                active-value="0"
-                inactive-value="1"
-                :change="change"
+                @change="change"
                 active-color="#13ce66">
               </el-switch>
             </el-form-item>
-					</el-form>
-          <el-form-item label="回调token">
+            <el-form-item label="回调token">
               <el-input
                 disabled
                 style="display: block"
                 v-model="userInfo.token"
-                active-value="0"
-                inactive-value="1"
                 active-color="#13ce66">
               </el-input>
             </el-form-item>
           </el-form>
 					<div slot="footer" class="dialog-footer">
-					  <el-button type="primary" @click="submit">确 定</el-button>
+					  <el-button type="primary"  :loading="isSubmit" @click="submit">确 定</el-button>
 					</div>
         </div>
     </div>
 </template>
 
 <script>
-    import VueCropper  from 'vue-cropperjs';
     export default {
         name: 'YYInfo',
         data: function(){
@@ -95,43 +89,16 @@
                 imgSrc: '',
                 cropImg: '',
                 dialogVisible: false,
-								userInfo: {},
-                openapi: false
+								userInfo: {
+                  info: {
+                    name:''
+                  }
+                },
+                openapi: false,
+                isSubmit: false
             }
         },
-        components: {
-            VueCropper
-        },
         methods:{
-            setImage(e){
-                const file = e.target.files[0];
-                if (!file.type.includes('image/')) {
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    this.dialogVisible = true;
-                    this.imgSrc = event.target.result;
-                    this.$refs.cropper && this.$refs.cropper.replace(event.target.result);
-                };
-                reader.readAsDataURL(file);
-            },
-            cropImage () {
-                this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
-            },
-            cancelCrop(){
-                this.dialogVisible = false
-                this.cropImg = this.defaultSrc
-            },
-            imageuploaded(res) {
-                console.log(res)
-            },
-            handleError(){
-                this.$notify.error({
-                    title: '上传失败',
-                    message: '图片上传接口上传失败，可更改为自己的服务器接口'
-                });
-            },
 						loadData () {
 							this.$GET(this.$API.ADMIN.AdminUseInfo, {}).then(res => {
 								this.userInfo = res.data 
@@ -142,10 +109,12 @@
 							})
 						},
 						submit () {
+              this.isSubmit = true
 							let data = JSON.parse(JSON.stringify(this.userInfo))
 							data.info = JSON.stringify(data.info)
 							this.$POST(this.$API.ADMIN.AdminInsertUpdate, data).then(res => {
 								this.$message.success('修改成功')
+                this.isSubmit = false
 							})
 						},
             change(flag){
@@ -153,6 +122,8 @@
                 this.$GET(this.$API.ADMIN.AdminCreateToken, {}).then(res=> {
                   this.userInfo.token = res.data
                 })
+              }else{
+                this.userInfo.token = ''
               }
             }
         },
