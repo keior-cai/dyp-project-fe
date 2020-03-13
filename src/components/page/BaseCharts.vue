@@ -3,7 +3,7 @@
         <div class="container">
             <div class="schart-box">
                 <div class="content-title">订单数量</div>
-                <schart class="schart" canvasId="bar" :data="data1" type="bar" :options="options1"></schart>
+                <schart class="schart" canvasId="bar" ref="chart1" :data="data1" type="bar" :options="options1"></schart>
             </div>
             <div class="schart-box">
             <div class="content-title">交易额</div>
@@ -28,14 +28,9 @@
         components: {
             Schart
         },
-        data: () => ({
+        data()  {
+					return {
             data1:[
-                {name:'2012',value:1141},
-                {name:'2013',value:1499},
-                {name:'2014',value:2260},
-                {name:'2015',value:1170},
-                {name:'2016',value:970},
-                {name:'2017',value:1450}
             ],
             data2 : [
                 {name:'短袖',value:1200},
@@ -45,8 +40,8 @@
                 {name:'羽绒服',value:2314}
             ],
             options1: {
-                title: '某商店近年营业总额',
-                autoWidth: true,   // 设置宽高自适应
+                title: '近7天交易订单数量',
+                autoWidth: true,
                 showValue: false,
                 bgColor: '#F9EFCC',
                 fillColor: '#00887C',
@@ -54,34 +49,44 @@
                 yEqual: 7
             },
             options2: {
-                title: '某商店近年营业总额',
+                title: '近7天交易额',
                 bgColor: '#D5E4EB',
                 titleColor: '#00887C',
                 fillColor: 'red',
                 contentColor: 'rgba(46,199,201,0.3)'
             },
             options3: {
-                title: '某商店各商品年度销量',
+                title: '近7天下单用户类型',
                 bgColor: '#829dca',
                 titleColor: '#ffffff',
                 legendColor: '#ffffff',
                 radius: 120
             },
             options4: {
-                title: '某商店各商品年度销量',
+                title: '近7天电影销售',
                 bgColor: '#829daa',
                 titleColor: '#ffffff',
                 legendColor: '#ffffff',
                 radius: 120,
                 innerRadius:80
-            }
-        }),
+            },
+					}
+        },
 			methods:{
 				getCharts(){
 					this.$GET(this.$API.ADMIN.OrderStatics, {}).then(res => {
-						this.data1 = res.data
-						this.renderChart()
+						if(res.data != null){
+							this.data1 = res.data
+						}else {
+							this.data1.push({'name':'','value':0})
+						}
 					})
+				}
+			},
+			watch:{
+				data1(val){
+					this.$refs.chart1.renderChart()
+					console.log(this.$refs.chart1)
 				}
 			},
 			mounted() {

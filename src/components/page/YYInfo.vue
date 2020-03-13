@@ -64,12 +64,12 @@
               </el-switch>
             </el-form-item>
             <el-form-item label="回调token">
-              <el-input
+              <p
                 disabled
                 style="display: block"
-                v-model="userInfo.token"
                 active-color="#13ce66">
-              </el-input>
+								{{userInfo.token}}
+              </p>
             </el-form-item>
           </el-form>
 					<div slot="footer" class="dialog-footer">
