@@ -9,7 +9,7 @@
 // }
 
 // var baseUrl = 'http://localhost:9901/admin'
-var baseUrl = 'http://call.wezhuiyi.com:9901/admin'
+var baseUrl = 'http://ccj.wezhuiyi.com:9901/admin'
 // var baseUrl = 'http://192.168.31.127:9901/admin'
 // var baseUrl = 'http://47.106.78.139/admin'
 // var baseUrl = 'http://ccj.wezhuiyi.com/admin'
