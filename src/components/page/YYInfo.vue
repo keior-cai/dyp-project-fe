@@ -40,6 +40,16 @@
 							    </el-option>
 							  </el-select>
 						</el-form-item>
+            <el-form-item label="影院介绍">
+              <el-input
+                type="textarea"
+                style="width: 16rem"
+                placeholder="请填写影院介绍"
+                v-model="userInfo.info.yyInfo"
+                maxlength="50"
+                show-word-limit
+              />
+            </el-form-item>
 						<el-form-item label="是否开启回调">
               <el-switch
                 style="display: block"
@@ -94,6 +104,7 @@
                     name:''
                   }
                 },
+                yyInfo: '',
                 openapi: false,
                 isSubmit: false
             }
