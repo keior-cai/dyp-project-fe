@@ -41,37 +41,86 @@
 			  width="55">
 			</el-table-column>
 		  <el-table-column
-		    label="id">
-		    <template slot-scope="scope">{{ scope.row.id }}</template>
-		  </el-table-column>
-		  <el-table-column
 				prop="orderSn"
 				width="150"
+        align="center"
+        show-overflow-tooltip
 		    label="订单号">
 		  </el-table-column>
 			<el-table-column
 				prop="movieName"
+        align="center"
+        show-overflow-tooltip
 			  label="电影名称">
 			</el-table-column>
 			<el-table-column
-				prop="num"
+        align="center"
 			  label="数量">
+        <template slot-scope="scope">
+          <el-tag
+            type="success"
+            show-overflow-tooltip
+            effect="plain"
+            disable-transitions>
+            <span>{{scope.row.num}}张</span>
+          </el-tag>
+        </template>
 			</el-table-column>
+      <el-table-column
+        show-overflow-tooltip
+        align="center"
+        label="是否为VIP">
+        <template slot-scope="scope">
+          <el-switch
+            disabled
+            style="display: block"
+            v-model="scope.row.isVip"
+            active-color="#13ce66"
+            active-value=1
+            inactive-value=0
+            inactive-color="#ff4949">
+          </el-switch>
+        </template>
+      </el-table-column>
 			<el-table-column
+        align="center"
 			  label="单价">
-				<template slot-scope="scope">{{ scope.row.price | price(scope.row.price) }}元</template>
+        <template slot-scope="scope">
+          <el-tag
+            type="warning"
+            disable-transitions>
+            <span>{{scope.row.price | price(scope.row.price)}} 元</span>
+          </el-tag>
+        </template>
 			</el-table-column>
 			<el-table-column
 				width="total"
+        align="center"
 			  label="总价">
-				<template slot-scope="scope">{{ scope.row.num * scope.row.price | price(scope.row.num * scope.row.price) }}元</template>
+        <template slot-scope="scope">
+          <el-tag
+            type="success"
+            effect="plain"
+            disable-transitions>
+            <span>{{ scope.row.num * scope.row.price | price(scope.row.num * scope.row.price) }}元</span>
+          </el-tag>
+        </template>
 			</el-table-column>
 			<el-table-column
+        align="center"
 			  label="订单状态">
-				<template slot-scope="scope">{{ scope.row.status }}</template>
+				<template slot-scope="scope">
+          <el-tag
+            type="info"
+            effect="plain"
+            disable-transitions>
+            <span>{{ scope.row.status | orderStatus(scope.row.status) }}</span>
+          </el-tag>
+        </template>
 			</el-table-column>
       <el-table-column
         label="创建时间"
+        align="center"
         show-overflow-tooltip>
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
@@ -80,6 +129,7 @@
       </el-table-column>
       <el-table-column
         label="更新时间"
+        align="center"
         show-overflow-tooltip>
 				<template slot-scope="scope">
 				  <i class="el-icon-time"></i>

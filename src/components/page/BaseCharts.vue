@@ -3,19 +3,19 @@
         <div class="container">
             <div class="schart-box">
                 <div class="content-title">订单数量</div>
-                <schart class="schart" canvasId="bar" :data="data1" type="bar" :options="options1"></schart>
+                <schart class="schart" canvasId="bar" ref="chart" :data="data1" type="bar" :options="options1"></schart>
             </div>
             <div class="schart-box">
             <div class="content-title">交易额</div>
-            <schart class="schart" canvasId="line" :data="data1" type="line" :options="options2"></schart>
+            <schart class="schart" canvasId="line" ref="chart1" :data="data1" type="line" :options="options2"></schart>
             </div>
             <div class="schart-box">
             <div class="content-title">下单用户类型</div>
-            <schart class="schart" canvasId="pie" :data="data2" type="pie" :options="options3"></schart>
+            <schart class="schart" canvasId="pie" ref="chart2" :data="data2" type="pie" :options="options3"></schart>
             </div>
             <div class="schart-box">
             <div class="content-title">电影</div>
-            <schart class="schart" canvasId="ring" :data="data2" type="ring" :options="options4"></schart>
+            <schart class="schart" canvasId="ring" ref="chart3" :data="data2" type="ring" :options="options4"></schart>
             </div>
         </div>
     </div>
@@ -28,21 +28,11 @@
         components: {
             Schart
         },
-        data: () => ({
+        data() {
+          return {
             data1:[
-                {name:'2012',value:1141},
-                {name:'2013',value:1499},
-                {name:'2014',value:2260},
-                {name:'2015',value:1170},
-                {name:'2016',value:970},
-                {name:'2017',value:1450}
             ],
             data2 : [
-                {name:'短袖',value:1200},
-                {name:'休闲裤',value:1222},
-                {name:'连衣裙',value:1283},
-                {name:'外套',value:1314},
-                {name:'羽绒服',value:2314}
             ],
             options1: {
                 title: '某商店近年营业总额',
@@ -74,13 +64,17 @@
                 legendColor: '#ffffff',
                 radius: 120,
                 innerRadius:80
-            }
-        }),
+            },
+          }
+       },
 			methods:{
 				getCharts(){
 					this.$GET(this.$API.ADMIN.OrderStatics, {}).then(res => {
-						this.data1 = res.data
-						this.renderChart()
+            if(res.data != null) {
+             this.$set(this, 'data1', res.data)
+            }else {
+              this.$set(this, 'data1', [])
+            }
 					})
 				}
 			},
