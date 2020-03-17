@@ -62,20 +62,24 @@
     	  </el-table-column>
     	  <el-table-column
     	    label="电影名称"
+          align="center"
           show-overflow-tooltip
 					prop="name">
     	    <template slot-scope="scope"><span style="color: #303133; font-size: 0.875rem;">{{ scope.row.name }}</span></template>
     	  </el-table-column>
 				<el-table-column
+          align="center"
 				  label="图片">
 				  <template slot-scope="scope"><img style="width: 5.625rem; height: 5.625rem;" :src="scope.row.imgUrl" class="avatar"></template>
 				</el-table-column>
     	  <el-table-column
     	    prop="title"
+          align="center"
           show-overflow-tooltip
     	    label="标题">
     	  </el-table-column>
 				<el-table-column
+          align="center"
     	    label="单价">
           <template slot-scope="scope">
             <el-tag
@@ -86,6 +90,7 @@
           </template>
     	  </el-table-column>
 				<el-table-column
+          align="center"
 				  label="VIP价格">
           <template slot-scope="scope">
             <el-tag
@@ -97,11 +102,13 @@
 				</el-table-column>
     	  <el-table-column
     	    prop="content"
+          align="center"
     	    label="详情"
     	    show-overflow-tooltip>
     	  </el-table-column>
     	  <el-table-column
     	    label="状态"
+          align="center"
     	    show-overflow-tooltip>
           <template slot-scope="scope">
             <el-tag
@@ -115,16 +122,19 @@
     	  </el-table-column>
     	  <el-table-column
     	    prop="director"
+          align="center"
     	    label="导演"
     	    show-overflow-tooltip>
     	  </el-table-column>
     	  <el-table-column
     	    prop="actor"
     	    label="演员"
+          align="center"
     	    show-overflow-tooltip>
     	  </el-table-column>
         <el-table-column
           label="上映时间"
+          align="center"
           show-overflow-tooltip>
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
@@ -133,6 +143,7 @@
         </el-table-column>
         <el-table-column
           label="下线时间"
+          align="center"
           show-overflow-tooltip>
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
@@ -141,6 +152,7 @@
         </el-table-column>
     	  <el-table-column
     	    label="创建时间"
+          align="center"
     	    show-overflow-tooltip>
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
@@ -149,6 +161,7 @@
     	  </el-table-column>
     	  <el-table-column
     	    label="更新时间"
+          align="center"
     	    show-overflow-tooltip>
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
@@ -157,6 +170,7 @@
     	  </el-table-column>
 				<el-table-column
 				  label="操作"
+          align="center"
 				  fixed="right"
 					width="120"
 				  highlight-current-row
@@ -182,7 +196,7 @@
 				        content="删除"
 				        placement="right">
 				        <el-button 
-				          type="danger" 
+				          type="danger"
 				          icon="el-icon-delete"
 				          size="mini"
 				          @click="del(scope.row)"/>
@@ -220,18 +234,18 @@
 			        placeholder="请输标题"/>
 			    </el-form-item>
 			    <el-form-item label="单价">
-			      <el-input 
-			        placeholder="请输入单价"
-			        type="number"
-			        v-model="userInfo.price" 
-			        prop="price"/>
+            <el-input-number
+              v-model="userInfo.price"
+              :precision="2"
+              :step="0.1"
+              ></el-input-number>
 			    </el-form-item>
 					<el-form-item label="VIP价格">
-					  <el-input 
-					    placeholder="请输入VIP价格"
-					    type="number"
-					    v-model="userInfo.vipPrice" 
-					    prop="vipPrice"/>
+            <el-input-number
+              v-model="userInfo.vipPrice"
+              :precision="2"
+              :step="0.1"
+              ></el-input-number>
 					</el-form-item>
 					<el-form-item label="电影详情">
 						<el-input type="textarea"

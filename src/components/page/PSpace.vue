@@ -31,7 +31,7 @@
 				@click="add()"
 				:disabled="addPSpace"
 				><i class="el-icon-plus"></i>添加排场</el-button>
-        <el-button type="danger" @click="delAll()" plain><i class="el-icon-delete"></i>批删除排场</el-button>
+        <el-button type="danger" :loading="delAllLoading" @click="delAll()" plain><i class="el-icon-delete"></i>批删除排场</el-button>
       </div>
 		</div>
 		<el-table
@@ -66,15 +66,21 @@
 			</el-table-column>
 		  <el-table-column
 				prop="movieName"
+        align="center"
         show-overflow-tooltip
 		    label="电影名称">
 		  </el-table-column>
 			<el-table-column
 				prop="name"
+        align="center"
+        width="150"
         show-overflow-tooltip
 			  label="场地名称">
 			</el-table-column>
 			<el-table-column
+        show-overflow-tooltip
+        width="150"
+        align="center"
 			  label="场地位置">
         <template slot-scope="scope">
           <i class="el-icon-location"></i>
@@ -82,6 +88,7 @@
         </template>
 			</el-table-column>
 			<el-table-column
+        align="center"
 			  label="场地容量">
         <template slot-scope="scope">
           <el-tag
@@ -94,6 +101,7 @@
 			</el-table-column>
 			<el-table-column
 				width="100"
+        align="center"
 			  label="场地剩余容量">
         <template slot-scope="scope">
           <el-tag
@@ -105,6 +113,9 @@
         </template>
 			</el-table-column>
 			<el-table-column
+        disable-transitions
+        width="85"
+        align="center"
 			  label="影票单价">
         <template slot-scope="scope">
           <el-tag
@@ -116,6 +127,7 @@
 			</el-table-column>
 			<el-table-column
 				width="100"
+        align="center"
 			  label="影票VIP单价">
         <template slot-scope="scope">
           <el-tag
@@ -126,7 +138,20 @@
         </template>
 			</el-table-column>
 		  <el-table-column
-        width="105"
+		    width="125"
+        align="center"
+		    label="售卖日期">
+		    <template slot-scope="scope">
+		      <el-tag
+		        type="info"
+		        disable-transitions>
+		        <span><i class="el-icon-time"></i>&nbsp;{{scope.row.stroeTime | formatTime(scope.row.stroeTime, 'YYYY-MM-DD')}}</span>
+		      </el-tag>
+		    </template>
+		  </el-table-column>
+      <el-table-column
+        width="110"
+        align="center"
 		    label="播放日期">
         <template slot-scope="scope">
           <el-tag
@@ -137,18 +162,21 @@
         </template>
 		  </el-table-column>
       <el-table-column
-        label="排查状态">
+        align="center"
+        label="排场状态">
         <template slot-scope="scope">
           <el-tag
-            :type="scope.row.movieStatus == 2 ? 'danger' : 'success'"
+            :type="scope.row.status == 2 ? 'danger' : 'success'"
             disable-transitions>
-            <span v-if="scope.row.movieStatus == 2">已过期</span>
+            <span v-if="scope.row.status == 2">已过期</span>
+            <span v-if="scope.row.status == 0">待上线</span>
             <span v-else>进行中</span>
           </el-tag>
         </template>
       </el-table-column>
 			<el-table-column
 		    label="播放时间"
+        align="center"
 		    width="120">
         <template slot-scope="scope">
           <el-tag
@@ -161,6 +189,7 @@
 		  </el-table-column>
 			<el-table-column
 				width="100"
+        align="center"
 			  label="结束播放时间">
         <template slot-scope="scope">
           <el-tag
@@ -173,6 +202,8 @@
 			</el-table-column>
       <el-table-column
         label="创建时间"
+        width="150"
+        align="center"
         show-overflow-tooltip>
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
@@ -180,19 +211,25 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="updateTime"
+        width="150"
+        align="center"
         label="更新时间"
         show-overflow-tooltip>
+        <template slot-scope="scope">
+          <i class="el-icon-time"></i>
+          <span style="margin-left: 10px">{{scope.row.updateTime}}</span>
+        </template>
       </el-table-column>
       <el-table-column
         label="操作"
+        align="center"
         fixed="right"
         highlight-current-row
 				width="180"
         show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-tooltip 
-              v-if="scope.row.movieStatus != 2"
+            <!-- <el-tooltip 
+              v-if="scope.row.status == 0"
               class="item" 
               effect="dark" 
               content="编辑"  
@@ -202,9 +239,9 @@
                 size="mini"
                 icon="el-icon-edit"
                 @click="edit(scope.row)"/>
-            </el-tooltip>
+            </el-tooltip> -->
             <el-tooltip 
-              v-if="scope.row.movieStatus != 2"
+              v-if="scope.row.status == 0"
               class="item" 
               effect="dark" 
               content="删除"
@@ -213,6 +250,7 @@
                 type="danger" 
                 icon="el-icon-delete"
                 size="mini"
+                :loading="scope.row.loadding"
                 @click="del(scope.row)"/>
             </el-tooltip>
           </template>
@@ -236,6 +274,7 @@
 						v-model="movieId" 
 						clearable
 						:style="{'margin-left': '20px'}"
+            @change="selectChange(movieId)"
 						placeholder="请选择">
 						<el-option
 							v-for="(item, index) in movies"
@@ -257,35 +296,32 @@
 							placeholder="选择时间范围">
           </el-time-picker>
 				</el-form-item>
+        <el-form-item label="单价">
+        	<!-- <el-input
+            :style="{'margin-left': '20px', 'width':'215px'}"
+            type="number"
+        		v-model=""> -->
+          </el-input>
+          <el-input-number 
+            v-model="price"
+            :precision="2"
+            :style="{'margin-left': '20px'}"
+            :step="0.1"
+            ></el-input-number>
+        </el-form-item>
+        <el-form-item label="VIP单价">
+          <el-input-number 
+          v-model="vipPrice"
+          :style="{'margin-left': '20px'}"
+          :precision="2"
+          :step="0.1"></el-input-number>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
-		<!-- 电影院信息 -->
-		<el-dialog title="电影院信息" :visible.sync="infoDialog" width="500px">
-		  <el-form :model="movieInfo" status-icon ref="ruleForm" label-width="100px">
-		    <el-form-item label="电影院名称">
-		      <el-input 
-		        v-model="movieInfo.name" 
-		        autocomplete="off" 
-		        placeholder="请输入电影院名称"
-		        maxlength="20"
-		        show-word-limit/>
-		    </el-form-item>
-		    <el-form-item label="电影院地址">
-		      <el-input
-		        v-model="movieInfo.address"
-		        autocomplete="off" 
-		        placeholder="请输电影院地址"/>
-		    </el-form-item>
-		  </el-form>
-		  <div slot="footer" class="dialog-footer">
-		    <el-button @click="infoDialog = false">取 消</el-button>
-		    <el-button type="primary" @click="infoSubmit">确 定</el-button>
-		  </div>
-		</el-dialog>
 	</div>
 </template>
 
@@ -313,6 +349,7 @@
         }
       return {
         title: '',
+        delAllLoading: false,
 				addPSpace: true,
         tableData: [],
 				tablePageSize: 10,
@@ -340,6 +377,8 @@
 				movieInfo: {},
         date : '',
         ids : [],
+        price: 0.00,
+        vipPrice: 0.00,
 				infoDialog: false,
         rules: {
           pass: [
@@ -377,6 +416,14 @@
       },
       filterTag(key, row) {
         return row.status == key
+      },
+      selectChange(item) {
+        this.movies.forEach(e => {
+          if(e.id == item) {
+            this.price = e.price
+            this.vipPrice = e.vipPrice
+          }
+        })
       },
       toggleSelection(rows) {
         if (rows) {
@@ -423,13 +470,23 @@
       },
       edit(data){
         this.title = '修改排场信息'
+        this.movieId = data.movieName
+        this.price = data.price
+        this.vipPrice = data.vipPrice
         this.dialogFormVisible = true
+        let date = new Date()
+        const startTime = new Date(`1970-01-01 ${data.downTime}`)
+        const endTime = new Date(`1970-01-01 ${data.downTime}`)
+        this.$set(this, 'time', [startTime, endTime])
         this.userInfo = data
         this.userInfo.userUpdate = true
         this.userInfo.statueTmp = this.userInfo.status == 'ACTIVE' ? true : false
         this.userInfo.roleTmp = this.userInfo.role == 0 ? '普通客户' : ''
       },
       add(){
+        this.price = 0.00
+        this.vipPrice = 0.00
+        this.userInfo = {}
         this.userInfo = {
           userUpdate: false
         }
@@ -437,19 +494,27 @@
         this.dialogFormVisible = true
       },
       del(data) {
+        data.loadding = true
         this.userInfo = data
         this.$POST(this.$API.ADMIN.AdminInsertUpdate, {id : this.userInfo.id, deleted : 1})
         .then(res => {
            this.$message.success('删除成功')
+           data.loadding = false
            this.loadData()
            this.dialogFormVisible = false
         })
       },
       delAll(){
+        if(this.ids.length <= 0) {
+          this.$message.error('请选择排场')
+          return
+        }
+        this.delAllLoading = true
         this.ids.forEach(e=> {
           this.$POST(this.$API.ADMIN.AdminInsertUpdate, {id : e, deleted : 1})
         })
         this.$message.success('批量删除成功')
+        this.delAllLoading = false
         this.loadData()
       },
 			loadMovie(){
@@ -467,15 +532,20 @@
       submit(){
 				let startTime = this.time[0].toTimeString().split(' ')[0]
 				let endTime = this.time[1].toTimeString().split(' ')[0]
-				let data = {}
-				if(this.userInfo.userUpdate){
-					data.id = this.id
-				}
-				data.mId = this.movieId
-				data.sId = this.spaceId
-				data.date = this.date.toLocaleDateString().replace('/','-').replace('/','-')
+				let data = this.userInfo
+        if(data.mId == null) {
+          data.mId = this.movieId
+        }
+        if(data.sId == null) {
+          data.sId = this.spaceId
+        }
+        if(data.date == null) {
+          data.date = this.date.toLocaleDateString().replace('/','-').replace('/','-')
+        }
 				data.upTime = startTime
 				data.downTime = endTime
+        data.price = this.price
+        data.vipPrice = this.vipPrice
 				this.$POST(this.$API.ADMIN.AdminInsertUpdatePSpace,data)
 				.then(res => {
 					this.dialogFormVisible = false

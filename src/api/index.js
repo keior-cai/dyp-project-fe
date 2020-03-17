@@ -22,6 +22,7 @@ export const API = {
     AdminUseInfo : baseUrl + '/management/admin/getAdminInfo',
     AdminCreateToken : baseUrl + '/management/admin/createToken',
     AdminLoadCustomer : baseUrl + '/management/admin/queryAdmin',
+    AdminGetIndexCharts : baseUrl + '/management/admin/getIndexCharts',
     AdminLoadStaticsData : baseUrl + '/management/admin/getStatics',
     AdmingetCount : baseUrl + '/management/admin/getCount',
     AdminInsertUpdate : baseUrl + '/management/admin/insertUpdate',

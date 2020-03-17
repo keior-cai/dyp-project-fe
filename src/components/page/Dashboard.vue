@@ -81,12 +81,12 @@
         <el-row :gutter="20">
             <el-col :span="12">
                 <el-card shadow="hover">
-                    <schart ref="bar" class="schart" canvasId="bar" :data="data" type="bar" :options="options"></schart>
+                    <schart ref="bar" class="schart" canvasId="bar" :data="data1" type="bar" :options="options"></schart>
                 </el-card>
             </el-col>
             <el-col :span="12">
                 <el-card shadow="hover">
-                    <schart ref="line" class="schart" canvasId="line" :data="data" type="line" :options="options2"></schart>
+                    <schart ref="line" class="schart" canvasId="line" :data="data2" type="line" :options="options2"></schart>
                 </el-card>
             </el-col>
         </el-row>
@@ -108,44 +108,18 @@
                 name : '',
                 userInfo: {},
                 todoList: [],
-                data: [{
-                        name: '2018/09/04',
-                        value: 1083
-                    },
-                    {
-                        name: '2018/09/05',
-                        value: 941
-                    },
-                    {
-                        name: '2018/09/06',
-                        value: 1139
-                    },
-                    {
-                        name: '2018/09/07',
-                        value: 816
-                    },
-                    {
-                        name: '2018/09/08',
-                        value: 327
-                    },
-                    {
-                        name: '2018/09/09',
-                        value: 228
-                    },
-                    {
-                        name: '2018/09/10',
-                        value: 1065
-                    }
+                data1: [
                 ],
+								data2: [],
                 options: {
-                    title: '最近七天每天的用户访问量',
+                    title: '最近七天每天的用户下单量',
                     showValue: false,
                     fillColor: 'rgb(45, 140, 240)',
                     bottomPadding: 30,
                     topPadding: 30
                 },
                 options2: {
-                    title: '最近七天用户访问趋势',
+                    title: '最近七天交易趋势',
                     fillColor: '#FC6FA1',
                     axisColor: '#008ACD',
                     contentColor: '#EEEEEE',
@@ -210,6 +184,15 @@
 					})
 					this.$GET(this.$API.ADMIN.LOGURL,{}).then(res => {
 						this.todoList = res.data
+					})
+					this.loadStaticsCount()
+					this.$GET(this.$API.ADMIN.AdminGetIndexCharts, {}).then(res => {
+						let list = res.data
+						for(let i = 0; i < list.length; i++){
+							let obj = list[i]
+							this.$set(this.data1, i, {'name': obj.time, 'value': obj.count})
+							this.$set(this.data2, i, {'name': obj.time, 'value': obj.total})
+						}
 					})
 				}
     }
