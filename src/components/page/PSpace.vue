@@ -31,7 +31,7 @@
 				@click="add()"
 				:disabled="addPSpace"
 				><i class="el-icon-plus"></i>添加排场</el-button>
-        <el-button type="danger" :loading="delAllLoading" @click="delAll()" plain><i class="el-icon-delete"></i>批删除排场</el-button>
+        <!-- <el-button type="danger" :loading="delAllLoading" @click="delAll()" plain><i class="el-icon-delete"></i>批删除排场</el-button> -->
       </div>
 		</div>
 		<el-table
@@ -220,7 +220,7 @@
           <span style="margin-left: 10px">{{scope.row.updateTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column
+<!--      <el-table-column
         label="操作"
         align="center"
         fixed="right"
@@ -228,7 +228,7 @@
 				width="180"
         show-overflow-tooltip>
           <template slot-scope="scope">
-            <!-- <el-tooltip 
+            <el-tooltip 
               v-if="scope.row.status == 0"
               class="item" 
               effect="dark" 
@@ -239,7 +239,7 @@
                 size="mini"
                 icon="el-icon-edit"
                 @click="edit(scope.row)"/>
-            </el-tooltip> -->
+            </el-tooltip>
             <el-tooltip 
               v-if="scope.row.status == 0"
               class="item" 
@@ -254,7 +254,7 @@
                 @click="del(scope.row)"/>
             </el-tooltip>
           </template>
-      </el-table-column>
+      </el-table-column> -->
 		</el-table>
 		<div class="block" style="text-align: right;">
 		  <el-pagination
@@ -588,6 +588,9 @@
   }
   .table-header {
     text-align: right;
+  }
+  .color{
+    background-color: red;
   }
   .block {
     background-color: #FFFFFF;

@@ -61,14 +61,14 @@ export default {
                 index: 'tabs',
                 title: '系统设置',
             		subs: [
-            			{
-            				index: 'vip',
-            				title: '邮件配置'
-            			},
-                  {
-            				index: 'vip',
-            				title: '短信配置'
-            			},
+            			// {
+            			// 	index: 'vip',
+            			// 	title: '邮件配置'
+            			// },
+               //    {
+            			// 	index: 'vip',
+            			// 	title: '短信配置'
+            			// },
             			{
             			    icon: 'el-icon-s-tools',
             			    index: 'Settings',

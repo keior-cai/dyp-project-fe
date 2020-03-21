@@ -9,20 +9,21 @@
             <div class="content-title">交易额</div>
             <schart class="schart" canvasId="line" ref="chart1" :data="data1" type="line" :options="options2"></schart>
             </div>
-            <div class="schart-box">
+<!--            <div class="schart-box">
             <div class="content-title">下单用户类型</div>
             <schart class="schart" canvasId="pie" ref="chart2" :data="data2" type="pie" :options="options3"></schart>
             </div>
             <div class="schart-box">
             <div class="content-title">电影</div>
             <schart class="schart" canvasId="ring" ref="chart3" :data="data2" type="ring" :options="options4"></schart>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
 
 <script>
-    import Schart from 'vue-schart';
+    import Schart from 'vue-schart'
+    import moment from 'moment/moment'
     export default {
         name: 'basecharts',
         components: {
@@ -68,13 +69,19 @@
           }
        },
 			methods:{
+        formatTime(time, format = 'YYYY.MM.DD HH:mm:ss') {
+          if(time == null) {
+            return "1970.01.01"
+          }
+          return moment(time).format(format)
+        },
 				getCharts(){
 					this.$GET(this.$API.ADMIN.AdminGetIndexCharts, {}).then(res => {
 						let list = res.data
 						for(let i = 0; i < list.length; i++){
 							let obj = list[i]
-							this.$set(this.data1, i, {'name': obj.time, 'value': obj.count})
-							this.$set(this.data2, i, {'name': obj.time, 'value': obj.total})
+							this.$set(this.data1, i, {'name': this.formatTime(obj.time, 'DD'), 'value': obj.count})
+							this.$set(this.data2, i, {'name': this.formatTime(obj.time, 'DD'), 'value': obj.total})
 						}
 					})
 				}
